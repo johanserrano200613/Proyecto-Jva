@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Examenes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a href="index.html">Resolver examen</a>
+      <a href="usuarios.html">Usuarios</a>
+      <a class="active" href="examenes.html">Examenes</a>
+    </nav>
+
+    <span class="session-label">Administrador Acme</span>
+  </header>
+
+  <main class="view management-view">
+    <div class="section-title">
+      <span>Banco de pruebas</span>
+      <h1>Gestion de examenes</h1>
+      <p>Configura examenes, preguntas y respuestas. Cada pregunta admite una unica respuesta correcta.</p>
+    </div>
+
+    <div class="split-layout">
+      <form class="panel">
+        <h2>Crear examen</h2>
+        <div class="two-columns">
+          <label>Codigo<input type="text"></label>
+          <label>Titulo<input type="text"></label>
+          <label>Tiempo en minutos<input type="number"></label>
+          <label>Porcentaje de aprobacion<input type="number"></label>
+        </div>
+        <label>Descripcion</label>
+        <textarea rows="4"></textarea>
+
+        <div class="panel-title-row questions-title">
+          <h3>Preguntas</h3>
+          <button class="secondary-button" type="button">Agregar pregunta</button>
+        </div>
+
+        <div class="question-editor">
+          <label>Pregunta 1</label>
+          <input type="text">
+          <label class="answer-row"><input type="radio" name="correct"> Descripcion de la respuesta</label>
+          <label class="answer-row"><input type="radio" name="correct"> Descripcion de la respuesta</label>
+          <button class="plain-button" type="button">Quitar</button>
+        </div>
+
+        <button class="primary-button" type="button">Guardar examen</button>
+      </form>
+
+      <article class="panel table-panel">
+        <div class="panel-title-row">
+          <h2>Examenes registrados</h2>
+          <span>1 registro</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Examen</th>
+                <th>Tiempo</th>
+                <th>Aprobacion</th>
+                <th>Preguntas</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>JS-101</td>
+                <td>Fundamentos de JavaScript</td>
+                <td>10 min</td>
+                <td>70%</td>
+                <td>3</td>
+                <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

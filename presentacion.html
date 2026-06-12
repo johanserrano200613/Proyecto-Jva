@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Presentacion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a class="active" href="index.html">Resolver examen</a>
+      <a href="login.html">Login</a>
+    </nav>
+
+    <span class="session-label">Acceso publico</span>
+  </header>
+
+  <main class="view exam-view">
+    <div class="exam-heading">
+      <div>
+        <p class="code">JS-101</p>
+        <h1>Fundamentos de JavaScript</h1>
+        <p>3 preguntas · Aprueba con 70%</p>
+      </div>
+      <strong class="timer">09:58</strong>
+    </div>
+
+    <form class="questions-form">
+      <fieldset class="question-card">
+        <legend>1. Que palabra se usa para declarar una constante?</legend>
+        <label><input type="radio" name="q1"> const</label>
+        <label><input type="radio" name="q1"> var</label>
+        <label><input type="radio" name="q1"> let</label>
+      </fieldset>
+
+      <fieldset class="question-card">
+        <legend>2. Que metodo permite recorrer un arreglo sin crear uno nuevo?</legend>
+        <label><input type="radio" name="q2"> forEach</label>
+        <label><input type="radio" name="q2"> map</label>
+        <label><input type="radio" name="q2"> filter</label>
+      </fieldset>
+
+      <fieldset class="question-card">
+        <legend>3. Que API del navegador guarda datos persistentes simples?</legend>
+        <label><input type="radio" name="q3"> localStorage</label>
+        <label><input type="radio" name="q3"> fetch</label>
+        <label><input type="radio" name="q3"> documentQuery</label>
+      </fieldset>
+
+      <a class="primary-button finish-button" href="resultado.html">Terminar</a>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a href="index.html">Resolver examen</a>
+      <a class="active" href="login.html">Login</a>
+    </nav>
+
+    <span class="session-label">Acceso privado</span>
+  </header>
+
+  <main class="view login-view">
+    <div class="login-hero">
+      <span>Modulo privado</span>
+      <h1>Gestiona usuarios y examenes con una cuenta autorizada.</h1>
+      <p>Ingresa para administrar el banco de examenes de Acme School. Los estudiantes pueden resolver pruebas desde el modulo publico.</p>
+    </div>
+
+    <form class="panel login-panel">
+      <h2>Iniciar sesion</h2>
+      <label for="email">Email</label>
+      <input id="email" type="email" value="admin@acme.edu">
+
+      <label for="password">Contrasena</label>
+      <input id="password" type="password" value="Admin123">
+
+      <p class="hint">Usuario demo: admin@acme.edu / Admin123</p>
+      <a class="primary-button wide-button" href="usuarios.html">Entrar</a>
+    </form>
+  </main>
+</body>
+</html>

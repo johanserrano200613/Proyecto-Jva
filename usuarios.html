@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Usuarios</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a href="index.html">Resolver examen</a>
+      <a class="active" href="usuarios.html">Usuarios</a>
+      <a href="examenes.html">Examenes</a>
+    </nav>
+
+    <span class="session-label">Administrador Acme</span>
+  </header>
+
+  <main class="view management-view">
+    <div class="section-title">
+      <span>Administracion</span>
+      <h1>Gestion de usuarios</h1>
+      <p>Crea, actualiza y elimina cuentas con acceso a los modulos privados.</p>
+    </div>
+
+    <div class="split-layout">
+      <form class="panel">
+        <h2>Crear usuario</h2>
+        <label>Numero de identificacion</label>
+        <input type="text">
+        <label>Nombre completo</label>
+        <input type="text">
+        <label>Email</label>
+        <input type="email">
+        <label>Telefono</label>
+        <input type="tel">
+        <label>Cargo</label>
+        <select>
+          <option>Administrativo</option>
+          <option>Docente</option>
+        </select>
+        <label>Contrasena</label>
+        <input type="password">
+        <div class="form-actions">
+          <button class="primary-button" type="button">Crear usuario</button>
+          <button class="plain-button" type="button">Limpiar</button>
+        </div>
+      </form>
+
+      <article class="panel table-panel">
+        <div class="panel-title-row">
+          <h2>Usuarios registrados</h2>
+          <span>1 registro</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Identificacion</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>100000001</td>
+                <td>Administrador Acme</td>
+                <td>admin@acme.edu</td>
+                <td><span class="pill">Administrativo</span></td>
+                <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </main>
+</body>
+</html>
