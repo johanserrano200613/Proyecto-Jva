@@ -1,12 +1,12 @@
-const STORAGE_KEYS = {
-  exams: "acme_exams",
-  selectedExam: "acme_selected_exam",
-  currentStudent: "acme_current_student",
-  currentResult: "acme_current_result",
-  results: "acme_results"
+const llaves = {
+  examenes: "acme_exams",
+  examenElegido: "acme_selected_exam",
+  estudianteActual: "acme_current_student",
+  resultadoActual: "acme_current_result",
+  resultados: "acme_results"
 };
 
-const demoExams = [
+const examenesDePrueba = [
   {
     id: "JS-101",
     code: "JS-101",
@@ -46,25 +46,27 @@ const demoExams = [
   }
 ];
 
-function seedExams() {
-  if (!localStorage.getItem(STORAGE_KEYS.exams)) {
-    localStorage.setItem(STORAGE_KEYS.exams, JSON.stringify(demoExams));
+function crearExamenesDePrueba() {
+  const yaHayExamenes = localStorage.getItem(llaves.examenes);
+
+  if (!yaHayExamenes) {
+    localStorage.setItem(llaves.examenes, JSON.stringify(examenesDePrueba));
   }
 }
 
-function getExams() {
-  seedExams();
-  return JSON.parse(localStorage.getItem(STORAGE_KEYS.exams)) || [];
+function obtenerExamenes() {
+  crearExamenesDePrueba();
+  return JSON.parse(localStorage.getItem(llaves.examenes)) || [];
 }
 
-function getSelectedExam() {
-  const selectedId = sessionStorage.getItem(STORAGE_KEYS.selectedExam);
-  const exams = getExams();
-  return exams.find((exam) => exam.id === selectedId) || exams[0];
+function obtenerExamenElegido() {
+  const idExamen = sessionStorage.getItem(llaves.examenElegido);
+  const examenes = obtenerExamenes();
+  return examenes.find((examen) => examen.id === idExamen) || examenes[0];
 }
 
-function escapeHtml(value) {
-  return String(value)
+function limpiarTexto(texto) {
+  return String(texto)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -72,15 +74,15 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function formatTime(totalSeconds) {
-  const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
-  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-  return `${minutes}:${seconds}`;
+function convertirTiempo(segundosTotales) {
+  const minutos = Math.floor(segundosTotales / 60).toString().padStart(2, "0");
+  const segundos = (segundosTotales % 60).toString().padStart(2, "0");
+  return `${minutos}:${segundos}`;
 }
 
-class ExamHubView extends HTMLElement {
+class VistaCatalogoExamenes extends HTMLElement {
   connectedCallback() {
-    const exams = getExams();
+    const examenes = obtenerExamenes();
 
     this.innerHTML = `
       <div class="hero-card">
@@ -90,50 +92,50 @@ class ExamHubView extends HTMLElement {
       </div>
 
       <div class="exam-list">
-        ${exams.map((exam) => `
+        ${examenes.map((examen) => `
           <article class="exam-card">
-            <p class="code">${escapeHtml(exam.code)}</p>
-            <h2>${escapeHtml(exam.title)}</h2>
-            <p>${escapeHtml(exam.description)}</p>
+            <p class="code">${limpiarTexto(examen.code)}</p>
+            <h2>${limpiarTexto(examen.title)}</h2>
+            <p>${limpiarTexto(examen.description)}</p>
             <div class="meta-row">
-              <span>${exam.timeLimit} min</span>
-              <span>${exam.approvalPercentage}% aprueba</span>
-              <span>${exam.questions.length} preguntas</span>
+              <span>${examen.timeLimit} min</span>
+              <span>${examen.approvalPercentage}% aprueba</span>
+              <span>${examen.questions.length} preguntas</span>
             </div>
-            <button class="primary-button" type="button" data-exam-id="${escapeHtml(exam.id)}">Presentar Examen</button>
+            <button class="primary-button" type="button" data-examen="${limpiarTexto(examen.id)}">Presentar Examen</button>
           </article>
         `).join("")}
       </div>
     `;
 
-    this.querySelectorAll("[data-exam-id]").forEach((button) => {
-      button.addEventListener("click", () => {
-        sessionStorage.setItem(STORAGE_KEYS.selectedExam, button.dataset.examId);
-        sessionStorage.removeItem(STORAGE_KEYS.currentStudent);
-        sessionStorage.removeItem(STORAGE_KEYS.currentResult);
+    this.querySelectorAll("[data-examen]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        sessionStorage.setItem(llaves.examenElegido, boton.dataset.examen);
+        sessionStorage.removeItem(llaves.estudianteActual);
+        sessionStorage.removeItem(llaves.resultadoActual);
         window.location.href = "registro.html";
       });
     });
   }
 }
 
-class StudentRegisterView extends HTMLElement {
+class VistaRegistroEstudiante extends HTMLElement {
   connectedCallback() {
-    const exam = getSelectedExam();
-    sessionStorage.setItem(STORAGE_KEYS.selectedExam, exam.id);
+    const examen = obtenerExamenElegido();
+    sessionStorage.setItem(llaves.examenElegido, examen.id);
 
     this.innerHTML = `
       <form class="panel narrow-panel">
-        <p class="code">${escapeHtml(exam.code)}</p>
-        <h1>${escapeHtml(exam.title)}</h1>
+        <p class="code">${limpiarTexto(examen.code)}</p>
+        <h1>${limpiarTexto(examen.title)}</h1>
         <p>Antes de iniciar, registra los datos que quedaran asociados a tus respuestas.</p>
 
-        <label for="studentId">Numero de identificacion</label>
-        <input id="studentId" type="text" inputmode="numeric" pattern="[0-9]{6,12}" minlength="6" maxlength="12" title="Ingresa solo numeros, entre 6 y 12 digitos." required>
+        <label for="identificacion">Numero de identificacion</label>
+        <input id="identificacion" type="text" inputmode="numeric" pattern="[0-9]{6,12}" minlength="6" maxlength="12" title="Ingresa solo numeros, entre 6 y 12 digitos." required>
         <small class="field-help">Solo numeros, entre 6 y 12 digitos.</small>
 
-        <label for="studentName">Nombre completo</label>
-        <input id="studentName" type="text" minlength="3" maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,80}" title="Ingresa tu nombre completo usando solo letras y espacios." required>
+        <label for="nombreCompleto">Nombre completo</label>
+        <input id="nombreCompleto" type="text" minlength="3" maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,80}" title="Ingresa tu nombre completo usando solo letras y espacios." required>
         <small class="field-help">Escribe nombres y apellidos, solo letras.</small>
 
         <div class="form-actions">
@@ -143,180 +145,181 @@ class StudentRegisterView extends HTMLElement {
       </form>
     `;
 
-    this.querySelector("form").addEventListener("submit", (event) => {
-      event.preventDefault();
-      const form = event.currentTarget;
+    this.querySelector("form").addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      const formulario = evento.currentTarget;
 
-      if (!form.checkValidity()) {
-        form.reportValidity();
+      if (!formulario.checkValidity()) {
+        formulario.reportValidity();
         return;
       }
 
-      const student = {
-        id: form.querySelector("#studentId").value.trim(),
-        fullName: form.querySelector("#studentName").value.trim(),
-        examId: exam.id,
+      const estudiante = {
+        id: formulario.querySelector("#identificacion").value.trim(),
+        fullName: formulario.querySelector("#nombreCompleto").value.trim(),
+        examId: examen.id,
         startedAt: new Date().toISOString()
       };
 
-      sessionStorage.setItem(STORAGE_KEYS.currentStudent, JSON.stringify(student));
+      sessionStorage.setItem(llaves.estudianteActual, JSON.stringify(estudiante));
       window.location.href = "presentacion.html";
     });
   }
 }
 
-class ExamRunnerView extends HTMLElement {
+class VistaResolverExamen extends HTMLElement {
   constructor() {
     super();
-    this.currentQuestion = 0;
-    this.answers = {};
-    this.remainingSeconds = 0;
-    this.timer = null;
+    this.preguntaActual = 0;
+    this.respuestas = {};
+    this.segundosRestantes = 0;
+    this.reloj = null;
   }
 
   connectedCallback() {
-    this.exam = getSelectedExam();
-    this.student = JSON.parse(sessionStorage.getItem(STORAGE_KEYS.currentStudent) || "null");
+    this.examen = obtenerExamenElegido();
+    this.estudiante = JSON.parse(sessionStorage.getItem(llaves.estudianteActual) || "null");
 
-    if (!this.student) {
+    if (!this.estudiante) {
       window.location.href = "registro.html";
       return;
     }
 
-    this.remainingSeconds = this.exam.timeLimit * 60;
-    this.render();
-    this.startTimer();
+    this.segundosRestantes = this.examen.timeLimit * 60;
+    this.mostrarPregunta();
+    this.iniciarReloj();
   }
 
   disconnectedCallback() {
-    clearInterval(this.timer);
+    clearInterval(this.reloj);
   }
 
-  render() {
-    const question = this.exam.questions[this.currentQuestion];
-    const answeredCount = Object.keys(this.answers).length;
+  mostrarPregunta() {
+    const pregunta = this.examen.questions[this.preguntaActual];
+    const cantidadRespondidas = Object.keys(this.respuestas).length;
 
     this.innerHTML = `
       <div class="exam-heading">
         <div>
-          <p class="code">${escapeHtml(this.exam.code)}</p>
-          <h1>${escapeHtml(this.exam.title)}</h1>
-          <p>${this.exam.questions.length} preguntas · Aprueba con ${this.exam.approvalPercentage}% · Estudiante: ${escapeHtml(this.student.fullName)}</p>
+          <p class="code">${limpiarTexto(this.examen.code)}</p>
+          <h1>${limpiarTexto(this.examen.title)}</h1>
+          <p>${this.examen.questions.length} preguntas - Aprueba con ${this.examen.approvalPercentage}% - Estudiante: ${limpiarTexto(this.estudiante.fullName)}</p>
         </div>
-        <strong class="timer" data-timer>${formatTime(this.remainingSeconds)}</strong>
+        <strong class="timer" data-reloj>${convertirTiempo(this.segundosRestantes)}</strong>
       </div>
 
       <div class="runner-stats">
-        <span>Pregunta ${this.currentQuestion + 1} de ${this.exam.questions.length}</span>
-        <span>${answeredCount} respondidas</span>
-        <span>${this.exam.timeLimit} min limite</span>
+        <span>Pregunta ${this.preguntaActual + 1} de ${this.examen.questions.length}</span>
+        <span>${cantidadRespondidas} respondidas</span>
+        <span>${this.examen.timeLimit} min limite</span>
       </div>
 
       <form class="questions-form">
         <fieldset class="question-card">
-          <legend>${this.currentQuestion + 1}. ${escapeHtml(question.text)}</legend>
-          ${question.answers.map((answer) => `
+          <legend>${this.preguntaActual + 1}. ${limpiarTexto(pregunta.text)}</legend>
+          ${pregunta.answers.map((respuesta) => `
             <label>
-              <input type="radio" name="pregunta_${escapeHtml(question.id)}" value="${escapeHtml(answer.id)}" ${this.answers[question.id] === answer.id ? "checked" : ""}>
-              ${escapeHtml(answer.text)}
+              <input type="radio" name="pregunta_${limpiarTexto(pregunta.id)}" value="${limpiarTexto(respuesta.id)}" ${this.respuestas[pregunta.id] === respuesta.id ? "checked" : ""}>
+              ${limpiarTexto(respuesta.text)}
             </label>
           `).join("")}
         </fieldset>
 
         <div class="runner-actions">
-          <button class="plain-button" type="button" data-prev ${this.currentQuestion === 0 ? "disabled" : ""}>Anterior</button>
-          <button class="secondary-button" type="button" data-next ${this.currentQuestion === this.exam.questions.length - 1 ? "disabled" : ""}>Siguiente</button>
+          <button class="plain-button" type="button" data-anterior ${this.preguntaActual === 0 ? "disabled" : ""}>Anterior</button>
+          <button class="secondary-button" type="button" data-siguiente ${this.preguntaActual === this.examen.questions.length - 1 ? "disabled" : ""}>Siguiente</button>
           <button class="primary-button finish-button" type="submit">Terminar examen</button>
         </div>
       </form>
     `;
 
-    this.querySelectorAll("input[type='radio']").forEach((input) => {
-      input.addEventListener("change", () => {
-        this.answers[question.id] = input.value;
-        this.updateStatsOnly();
+    this.querySelectorAll("input[type='radio']").forEach((opcion) => {
+      opcion.addEventListener("change", () => {
+        this.respuestas[pregunta.id] = opcion.value;
+        this.actualizarContadorRespondidas();
       });
     });
 
-    this.querySelector("[data-prev]").addEventListener("click", () => {
-      this.currentQuestion--;
-      this.render();
+    this.querySelector("[data-anterior]").addEventListener("click", () => {
+      this.preguntaActual--;
+      this.mostrarPregunta();
     });
 
-    this.querySelector("[data-next]").addEventListener("click", () => {
-      this.currentQuestion++;
-      this.render();
+    this.querySelector("[data-siguiente]").addEventListener("click", () => {
+      this.preguntaActual++;
+      this.mostrarPregunta();
     });
 
-    this.querySelector("form").addEventListener("submit", (event) => {
-      event.preventDefault();
-      this.finishExam();
+    this.querySelector("form").addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      this.terminarExamen();
     });
   }
 
-  updateStatsOnly() {
-    const stats = this.querySelector(".runner-stats");
-    if (stats) {
-      stats.children[1].textContent = `${Object.keys(this.answers).length} respondidas`;
+  actualizarContadorRespondidas() {
+    const estadisticas = this.querySelector(".runner-stats");
+
+    if (estadisticas) {
+      estadisticas.children[1].textContent = `${Object.keys(this.respuestas).length} respondidas`;
     }
   }
 
-  startTimer() {
-    this.timer = setInterval(() => {
-      this.remainingSeconds--;
-      const timerElement = this.querySelector("[data-timer]");
+  iniciarReloj() {
+    this.reloj = setInterval(() => {
+      this.segundosRestantes--;
+      const textoReloj = this.querySelector("[data-reloj]");
 
-      if (timerElement) {
-        timerElement.textContent = formatTime(Math.max(this.remainingSeconds, 0));
-        timerElement.classList.toggle("timer-danger", this.remainingSeconds <= 60);
+      if (textoReloj) {
+        textoReloj.textContent = convertirTiempo(Math.max(this.segundosRestantes, 0));
+        textoReloj.classList.toggle("timer-danger", this.segundosRestantes <= 60);
       }
 
-      if (this.remainingSeconds <= 0) {
-        this.finishExam(true);
+      if (this.segundosRestantes <= 0) {
+        this.terminarExamen(true);
       }
     }, 1000);
   }
 
-  finishExam(timeExpired = false) {
-    clearInterval(this.timer);
+  terminarExamen(tiempoAgotado = false) {
+    clearInterval(this.reloj);
 
-    const total = this.exam.questions.length;
-    const correct = this.exam.questions.reduce((score, question) => {
-      const selectedAnswer = this.answers[question.id];
-      const correctAnswer = question.answers.find((answer) => answer.correct);
-      return score + (selectedAnswer === correctAnswer.id ? 1 : 0);
+    const totalPreguntas = this.examen.questions.length;
+    const respuestasCorrectas = this.examen.questions.reduce((total, pregunta) => {
+      const respuestaElegida = this.respuestas[pregunta.id];
+      const respuestaCorrecta = pregunta.answers.find((respuesta) => respuesta.correct);
+      return total + (respuestaElegida === respuestaCorrecta.id ? 1 : 0);
     }, 0);
-    const percentage = Math.round((correct / total) * 100);
-    const approved = percentage >= this.exam.approvalPercentage;
+    const porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
+    const aprobado = porcentaje >= this.examen.approvalPercentage;
 
-    const result = {
+    const resultado = {
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      examId: this.exam.id,
-      examTitle: this.exam.title,
-      studentId: this.student.id,
-      studentName: this.student.fullName,
-      correct,
-      total,
-      percentage,
-      approved,
-      timeExpired,
-      answers: this.answers,
+      examId: this.examen.id,
+      examTitle: this.examen.title,
+      studentId: this.estudiante.id,
+      studentName: this.estudiante.fullName,
+      correct: respuestasCorrectas,
+      total: totalPreguntas,
+      percentage: porcentaje,
+      approved: aprobado,
+      timeExpired: tiempoAgotado,
+      answers: this.respuestas,
       finishedAt: new Date().toISOString()
     };
 
-    const storedResults = JSON.parse(localStorage.getItem(STORAGE_KEYS.results) || "[]");
-    storedResults.push(result);
-    localStorage.setItem(STORAGE_KEYS.results, JSON.stringify(storedResults));
-    sessionStorage.setItem(STORAGE_KEYS.currentResult, JSON.stringify(result));
+    const resultadosGuardados = JSON.parse(localStorage.getItem(llaves.resultados) || "[]");
+    resultadosGuardados.push(resultado);
+    localStorage.setItem(llaves.resultados, JSON.stringify(resultadosGuardados));
+    sessionStorage.setItem(llaves.resultadoActual, JSON.stringify(resultado));
     window.location.href = "resultado.html";
   }
 }
 
-class ExamResultView extends HTMLElement {
+class VistaResultadoExamen extends HTMLElement {
   connectedCallback() {
-    const result = JSON.parse(sessionStorage.getItem(STORAGE_KEYS.currentResult) || "null");
+    const resultado = JSON.parse(sessionStorage.getItem(llaves.resultadoActual) || "null");
 
-    if (!result) {
+    if (!resultado) {
       this.innerHTML = `
         <article class="result-card">
           <span>Resultado</span>
@@ -331,17 +334,17 @@ class ExamResultView extends HTMLElement {
     this.innerHTML = `
       <article class="result-card">
         <span>Resultado</span>
-        <strong>${result.percentage}%</strong>
-        <p>${result.correct} de ${result.total} respuestas acertadas.</p>
-        <p class="result-meta">Estudiante: ${escapeHtml(result.studentName)} · ID: ${escapeHtml(result.studentId)}</p>
-        <div class="status ${result.approved ? "pass" : "fail"}">${result.approved ? "Examen aprobado" : "Examen no aprobado"}</div>
+        <strong>${resultado.percentage}%</strong>
+        <p>${resultado.correct} de ${resultado.total} respuestas acertadas.</p>
+        <p class="result-meta">Estudiante: ${limpiarTexto(resultado.studentName)} - ID: ${limpiarTexto(resultado.studentId)}</p>
+        <div class="status ${resultado.approved ? "pass" : "fail"}">${resultado.approved ? "Examen aprobado" : "Examen no aprobado"}</div>
         <a class="primary-button wide-button" href="index.html">Volver a examenes</a>
       </article>
     `;
   }
 }
 
-customElements.define("exam-hub-view", ExamHubView);
-customElements.define("student-register-view", StudentRegisterView);
-customElements.define("exam-runner-view", ExamRunnerView);
-customElements.define("exam-result-view", ExamResultView);
+customElements.define("exam-hub-view", VistaCatalogoExamenes);
+customElements.define("student-register-view", VistaRegistroEstudiante);
+customElements.define("exam-runner-view", VistaResolverExamen);
+customElements.define("exam-result-view", VistaResultadoExamen);
