@@ -400,6 +400,14 @@ textarea {
   font-size: 12px;
 }
 
+.field-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .section-title {
   margin-bottom: 30px;
 }
@@ -513,6 +521,11 @@ td a {
 .answer-row input {
   width: auto;
   min-height: auto;
+}
+
+.answer-row input[type="text"] {
+  width: 100%;
+  min-height: 34px;
 }
 
 @media (max-width: 900px) {
