@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Exam platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#resolver">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a class="active" href="#resolver">Resolver examen</a>
+      <a href="#usuarios">Usuarios</a>
+      <a href="#examenes">Examenes</a>
+      <a href="#login">Login</a>
+    </nav>
+
+    <span class="session-label">Acceso publico</span>
+  </header>
+
+  <main>
+    <section class="view public-view" id="resolver">
+      <div class="hero-card">
+        <span>Modulo publico</span>
+        <h1>Selecciona un examen disponible</h1>
+        <p>Elige una prueba, registra tus datos y responde dentro del tiempo establecido.</p>
+      </div>
+
+      <article class="exam-card">
+        <p class="code">JS-101</p>
+        <h2>Fundamentos de JavaScript</h2>
+        <p>Evalua conceptos basicos de variables, funciones, arreglos y DOM.</p>
+        <div class="meta-row">
+          <span>10 min</span>
+          <span>70% aprueba</span>
+          <span>3 preguntas</span>
+        </div>
+        <a class="primary-button" href="#registro">Presentar</a>
+      </article>
+    </section>
+
+    <section class="view centered-view" id="registro">
+      <form class="panel narrow-panel">
+        <p class="code">JS-101</p>
+        <h1>Fundamentos de JavaScript</h1>
+        <p>Antes de iniciar, registra los datos que quedaran asociados a tus respuestas.</p>
+
+        <label for="studentId">Numero de identificacion</label>
+        <input id="studentId" type="text">
+
+        <label for="studentName">Nombre completo</label>
+        <input id="studentName" type="text">
+
+        <div class="form-actions">
+          <a class="primary-button" href="#presentacion">Iniciar examen</a>
+          <a class="ghost-link" href="#resolver">Volver</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="view exam-view" id="presentacion">
+      <div class="exam-heading">
+        <div>
+          <p class="code">JS-101</p>
+          <h1>Fundamentos de JavaScript</h1>
+          <p>3 preguntas · Aprueba con 70%</p>
+        </div>
+        <strong class="timer">09:58</strong>
+      </div>
+
+      <form class="questions-form">
+        <fieldset class="question-card">
+          <legend>1. Que palabra se usa para declarar una constante?</legend>
+          <label><input type="radio" name="q1"> const</label>
+          <label><input type="radio" name="q1"> var</label>
+          <label><input type="radio" name="q1"> let</label>
+        </fieldset>
+
+        <fieldset class="question-card">
+          <legend>2. Que metodo permite recorrer un arreglo sin crear uno nuevo?</legend>
+          <label><input type="radio" name="q2"> forEach</label>
+          <label><input type="radio" name="q2"> map</label>
+          <label><input type="radio" name="q2"> filter</label>
+        </fieldset>
+
+        <fieldset class="question-card">
+          <legend>3. Que API del navegador guarda datos persistentes simples?</legend>
+          <label><input type="radio" name="q3"> localStorage</label>
+          <label><input type="radio" name="q3"> fetch</label>
+          <label><input type="radio" name="q3"> documentQuery</label>
+        </fieldset>
+
+        <a class="primary-button finish-button" href="#resultado">Terminar</a>
+      </form>
+    </section>
+
+    <section class="view centered-view" id="resultado">
+      <article class="result-card">
+        <span>Resultado</span>
+        <strong>33%</strong>
+        <p>1 de 3 respuestas acertadas.</p>
+        <div class="status fail">Examen no aprobado</div>
+        <a class="primary-button wide-button" href="#resolver">Volver a examenes</a>
+      </article>
+    </section>
+
+    <section class="view login-view" id="login">
+      <div class="login-hero">
+        <span>Modulo privado</span>
+        <h1>Gestiona usuarios y examenes con una cuenta autorizada.</h1>
+        <p>Ingresa para administrar el banco de examenes de Acme School. Los estudiantes pueden resolver pruebas desde el modulo publico.</p>
+      </div>
+
+      <form class="panel login-panel">
+        <h2>Iniciar sesion</h2>
+        <label for="email">Email</label>
+        <input id="email" type="email" value="admin@acme.edu">
+
+        <label for="password">Contrasena</label>
+        <input id="password" type="password" value="Admin123">
+
+        <p class="hint">Usuario demo: admin@acme.edu / Admin123</p>
+        <button class="primary-button" type="button">Entrar</button>
+      </form>
+    </section>
+
+    <section class="view management-view" id="usuarios">
+      <div class="section-title">
+        <span>Administracion</span>
+        <h1>Gestion de usuarios</h1>
+        <p>Crea, actualiza y elimina cuentas con acceso a los modulos privados.</p>
+      </div>
+
+      <div class="split-layout">
+        <form class="panel">
+          <h2>Crear usuario</h2>
+          <label>Numero de identificacion</label>
+          <input type="text">
+          <label>Nombre completo</label>
+          <input type="text">
+          <label>Email</label>
+          <input type="email">
+          <label>Telefono</label>
+          <input type="tel">
+          <label>Cargo</label>
+          <select>
+            <option>Administrativo</option>
+            <option>Docente</option>
+          </select>
+          <label>Contrasena</label>
+          <input type="password">
+          <div class="form-actions">
+            <button class="primary-button" type="button">Crear usuario</button>
+            <button class="plain-button" type="button">Limpiar</button>
+          </div>
+        </form>
+
+        <article class="panel table-panel">
+          <div class="panel-title-row">
+            <h2>Usuarios registrados</h2>
+            <span>1 registro</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Identificacion</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Cargo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>100000001</td>
+                  <td>Administrador Acme</td>
+                  <td>admin@acme.edu</td>
+                  <td><span class="pill">Administrativo</span></td>
+                  <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="view management-view" id="examenes">
+      <div class="section-title">
+        <span>Banco de pruebas</span>
+        <h1>Gestion de examenes</h1>
+        <p>Configura examenes, preguntas y respuestas. Cada pregunta admite una unica respuesta correcta.</p>
+      </div>
+
+      <div class="split-layout">
+        <form class="panel">
+          <h2>Crear examen</h2>
+          <div class="two-columns">
+            <label>Codigo<input type="text"></label>
+            <label>Titulo<input type="text"></label>
+            <label>Tiempo en minutos<input type="number"></label>
+            <label>Porcentaje de aprobacion<input type="number"></label>
+          </div>
+          <label>Descripcion</label>
+          <textarea rows="4"></textarea>
+
+          <div class="panel-title-row questions-title">
+            <h3>Preguntas</h3>
+            <button class="secondary-button" type="button">Agregar pregunta</button>
+          </div>
+
+          <div class="question-editor">
+            <label>Pregunta 1</label>
+            <input type="text">
+            <label class="answer-row"><input type="radio" name="correct"> Descripcion de la respuesta</label>
+            <label class="answer-row"><input type="radio" name="correct"> Descripcion de la respuesta</label>
+            <button class="plain-button" type="button">Quitar</button>
+          </div>
+
+          <button class="primary-button" type="button">Guardar examen</button>
+        </form>
+
+        <article class="panel table-panel">
+          <div class="panel-title-row">
+            <h2>Examenes registrados</h2>
+            <span>1 registro</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Examen</th>
+                  <th>Tiempo</th>
+                  <th>Aprobacion</th>
+                  <th>Preguntas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>JS-101</td>
+                  <td>Fundamentos de JavaScript</td>
+                  <td>10 min</td>
+                  <td>70%</td>
+                  <td>3</td>
+                  <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
