@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acme School | Resolver examen</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -25,23 +26,7 @@
   </header>
 
   <main class="view public-view">
-    <div class="hero-card">
-      <span>Modulo publico</span>
-      <h1>Selecciona un examen disponible</h1>
-      <p>Elige una prueba, registra tus datos y responde dentro del tiempo establecido.</p>
-    </div>
-
-    <article class="exam-card">
-      <p class="code">JS-101</p>
-      <h2>Fundamentos de JavaScript</h2>
-      <p>Evalua conceptos basicos de variables, funciones, arreglos y DOM.</p>
-      <div class="meta-row">
-        <span>10 min</span>
-        <span>70% aprueba</span>
-        <span>3 preguntas</span>
-      </div>
-      <a class="primary-button" href="registro.html">Presentar</a>
-    </article>
+    <exam-hub-view></exam-hub-view>
   </main>
 </body>
 </html>

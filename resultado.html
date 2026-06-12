@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acme School | Resultado</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -25,13 +26,7 @@
   </header>
 
   <main class="view centered-view">
-    <article class="result-card">
-      <span>Resultado</span>
-      <strong>33%</strong>
-      <p>1 de 3 respuestas acertadas.</p>
-      <div class="status fail">Examen no aprobado</div>
-      <a class="primary-button wide-button" href="index.html">Volver a examenes</a>
-    </article>
+    <exam-result-view></exam-result-view>
   </main>
 </body>
 </html>
