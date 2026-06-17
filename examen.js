@@ -166,3 +166,127 @@ mostrarExamenes();
 
 //funcion de presentacion
 
+const respuestasCorrectas = {
+    q1: "const",
+    q2: "forEach",
+    q3: "localStorage",
+    q4: "for",
+    q5: "push",
+    q6: "===",
+    q7: "console.log()",
+    q8: "let",
+    q9: "pop()",
+    q10: "function"
+};
+
+// TEMPORIZADOR
+let tiempo = 10 * 60; // 10 minutos
+
+const timer = document.querySelector(".timer");
+
+function actualizarReloj() {
+
+    let minutos = Math.floor(tiempo / 60);
+    let segundos = tiempo % 60;
+
+    minutos = minutos.toString().padStart(2, "0");
+    segundos = segundos.toString().padStart(2, "0");
+
+    timer.textContent = `${minutos}:${segundos}`;
+
+    if (tiempo <= 0) {
+
+        clearInterval(intervalo);
+
+        finalizarExamen();
+        return;
+    }
+
+    tiempo--;
+}
+
+const intervalo = setInterval(actualizarReloj, 1000);
+
+actualizarReloj();
+
+
+// BOTON TERMINAR
+const botonTerminar =
+document.querySelector(".finish-button");
+
+botonTerminar.addEventListener("click", function(e){
+
+    e.preventDefault();
+
+    finalizarExamen();
+});
+
+
+// CALCULAR RESULTADO
+function finalizarExamen(){
+
+    clearInterval(intervalo);
+
+    let correctas = 0;
+
+    for(let pregunta in respuestasCorrectas){
+
+        const seleccionada =
+        document.querySelector(
+            `input[name="${pregunta}"]:checked`
+        );
+
+        if(!seleccionada) continue;
+
+        const respuestaUsuario =
+        seleccionada.parentElement.textContent.trim();
+
+        if(
+            respuestaUsuario ===
+            respuestasCorrectas[pregunta]
+        ){
+            correctas++;
+        }
+    }
+
+    const total =
+    Object.keys(respuestasCorrectas).length;
+
+    const porcentaje =
+    (correctas / total) * 100;
+
+    const aprobado =
+    porcentaje >= 70;
+
+    const resultado = {
+
+        correctas,
+        total,
+        porcentaje: porcentaje.toFixed(2),
+        aprobado
+    };
+
+    localStorage.setItem(
+        "resultadoExamen",
+        JSON.stringify(resultado)
+    );
+
+    window.location.href =
+    "resultado.html";
+}
+
+//funcion de mostrar el resultado
+function mostrarResultado() {
+    const resultado = JSON.parse(localStorage.getItem("resultadoExamen"));
+    console.log(resultado);
+}
+
+mostrarResultado();
+
+const resultado = JSON.parse(
+    localStorage.getItem(
+        "resultadoExamen"
+    )
+);
+
+console.log(resultado);
