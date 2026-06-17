@@ -1,6 +1,7 @@
 //funcion de examenes
-const inputs = document.querySelectorAll("form input");
-const textarea = document.querySelector("form textarea");
+const inputs = document.querySelectorAll("input");
+const textarea = document.querySelector("textarea");
+
 
 let examenes = [];
 
@@ -179,7 +180,7 @@ const respuestasCorrectas = {
     q10: "function"
 };
 
-// TEMPORIZADOR
+// funcion del temporizador del examen
 let tiempo = 10 * 60; // 10 minutos
 
 const timer = document.querySelector(".timer");
@@ -189,9 +190,18 @@ function actualizarReloj() {
     let minutos = Math.floor(tiempo / 60);
     let segundos = tiempo % 60;
 
-    minutos = minutos.toString().padStart(2, "0");
-    segundos = segundos.toString().padStart(2, "0");
+   if (minutos < 10) {
+    minutos = "0" + minutos;
+} else {
+    minutos = minutos;
+}
 
+if (segundos < 10) {
+    segundos = "0" + segundos;
+} else {
+    segundos = segundos;
+}
+   
     timer.textContent = `${minutos}:${segundos}`;
 
     if (tiempo <= 0) {
@@ -203,6 +213,7 @@ function actualizarReloj() {
     }
 
     tiempo--;
+    console.log(tiempo);
 }
 
 const intervalo = setInterval(actualizarReloj, 1000);
@@ -210,7 +221,7 @@ const intervalo = setInterval(actualizarReloj, 1000);
 actualizarReloj();
 
 
-// BOTON TERMINAR
+// boton para terminar el examen
 const botonTerminar =
 document.querySelector(".finish-button");
 
@@ -222,7 +233,7 @@ botonTerminar.addEventListener("click", function(e){
 });
 
 
-// CALCULAR RESULTADO
+// funcion para que calcule el resultado del examen
 function finalizarExamen(){
 
     clearInterval(intervalo);
