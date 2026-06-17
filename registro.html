@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acme School | Registro</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -25,22 +26,7 @@
   </header>
 
   <main class="view centered-view">
-    <form class="panel narrow-panel">
-      <p class="code">JS-101</p>
-      <h1>Fundamentos de JavaScript</h1>
-      <p>Antes de iniciar, registra los datos que quedaran asociados a tus respuestas.</p>
-
-      <label for="studentId">Numero de identificacion</label>
-      <input id="studentId" type="text">
-
-      <label for="studentName">Nombre completo</label>
-      <input id="studentName" type="text">
-
-      <div class="form-actions">
-        <a class="primary-button" href="presentacion.html">Iniciar examen</a>
-        <a class="ghost-link" href="index.html">Volver</a>
-      </div>
-    </form>
+    <student-register-view></student-register-view>
   </main>
 </body>
 </html>

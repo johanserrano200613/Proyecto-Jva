@@ -31,16 +31,16 @@
       <p>Ingresa para administrar el banco de examenes de Acme School. Los estudiantes pueden resolver pruebas desde el modulo publico.</p>
     </div>
 
-    <form class="panel login-panel">
+    <form class="panel login-panel" action="usuarios.html">
       <h2>Iniciar sesion</h2>
       <label for="email">Email</label>
-      <input id="email" type="email" value="admin@acme.edu">
+      <input id="email" type="email" value="admin@acme.edu" autocomplete="email" required>
 
       <label for="password">Contrasena</label>
-      <input id="password" type="password" value="Admin123">
+      <input id="password" type="password" value="Admin1234" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}" title="Minimo 8 caracteres, una mayuscula, una minuscula y un numero." autocomplete="current-password" required>
 
-      <p class="hint">Usuario demo: admin@acme.edu / Admin123</p>
-      <a class="primary-button wide-button" href="usuarios.html">Entrar</a>
+      <p class="hint">Usuario demo: admin@acme.edu / Admin1234</p>
+      <button class="primary-button wide-button" type="submit">Entrar</button>
     </form>
   </main>
 </body>

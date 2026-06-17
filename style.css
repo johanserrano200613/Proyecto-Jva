@@ -131,6 +131,18 @@ textarea {
   gap: 22px;
 }
 
+exam-hub-view,
+student-register-view,
+exam-runner-view,
+exam-result-view {
+  display: block;
+}
+
+.exam-list {
+  display: grid;
+  gap: 18px;
+}
+
 .hero-card,
 .login-hero {
   overflow: hidden;
@@ -316,6 +328,27 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.timer-danger {
+  background: #7f3432;
+}
+
+.runner-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.runner-stats span {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .questions-form {
   display: grid;
   gap: 18px;
@@ -350,6 +383,18 @@ textarea {
   width: fit-content;
 }
 
+.runner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.runner-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .result-card {
   width: min(100%, 360px);
   text-align: center;
@@ -375,6 +420,15 @@ textarea {
   color: var(--danger);
 }
 
+.status.pass {
+  background: #dcefe7;
+  color: #1f6a55;
+}
+
+.result-meta {
+  font-size: 12px;
+}
+
 .wide-button {
   width: 100%;
 }
@@ -398,6 +452,14 @@ textarea {
 .hint {
   margin: 16px 0 0;
   font-size: 12px;
+}
+
+.field-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .section-title {
@@ -513,6 +575,11 @@ td a {
 .answer-row input {
   width: auto;
   min-height: auto;
+}
+
+.answer-row input[type="text"] {
+  width: 100%;
+  min-height: 34px;
 }
 
 @media (max-width: 900px) {

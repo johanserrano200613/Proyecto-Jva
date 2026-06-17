@@ -35,23 +35,33 @@
     <div class="split-layout">
       <form class="panel">
         <h2>Crear usuario</h2>
-        <label>Numero de identificacion</label>
-        <input type="text">
-        <label>Nombre completo</label>
-        <input type="text">
-        <label>Email</label>
-        <input type="email">
-        <label>Telefono</label>
-        <input type="tel">
-        <label>Cargo</label>
-        <select>
+        <label for="userId">Numero de identificacion</label>
+        <input id="userId" type="text" inputmode="numeric" pattern="[0-9]{6,12}" minlength="6" maxlength="12" title="Ingresa solo numeros, entre 6 y 12 digitos." required>
+        <small class="field-help">Solo numeros, entre 6 y 12 digitos.</small>
+
+        <label for="fullName">Nombre completo</label>
+        <input id="fullName" type="text" minlength="3" maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,80}" title="Ingresa nombre y apellido usando solo letras y espacios." required>
+        <small class="field-help">Debe incluir nombres y apellidos, sin numeros.</small>
+
+        <label for="userEmail">Email</label>
+        <input id="userEmail" type="email" autocomplete="email" required>
+
+        <label for="phone">Telefono</label>
+        <input id="phone" type="tel" inputmode="numeric" pattern="[0-9]{7,15}" minlength="7" maxlength="15" title="Ingresa solo numeros, entre 7 y 15 digitos." required>
+        <small class="field-help">Solo numeros, entre 7 y 15 digitos.</small>
+
+        <label for="role">Cargo</label>
+        <select id="role" required>
+          <option value="">Selecciona un cargo</option>
           <option>Administrativo</option>
           <option>Docente</option>
         </select>
-        <label>Contrasena</label>
-        <input type="password">
+
+        <label for="userPassword">Contrasena</label>
+        <input id="userPassword" type="password" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}" title="Minimo 8 caracteres, una mayuscula, una minuscula y un numero." autocomplete="new-password" required>
+        <small class="field-help">Minimo 8 caracteres, una mayuscula, una minuscula y un numero.</small>
         <div class="form-actions">
-          <button class="primary-button" type="button">Crear usuario</button>
+          <button class="primary-button" type="submit">Crear usuario</button>
           <button class="plain-button" type="button">Limpiar</button>
         </div>
       </form>
