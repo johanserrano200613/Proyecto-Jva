@@ -43,6 +43,13 @@
         </div>
         <label>Descripcion</label>
         <textarea rows="4" minlength="10" maxlength="300" required></textarea>
+          <label>Codigo<input type="text" id="codigo"></label>
+          <label>Titulo<input type="text" id="titulo"></label>
+          <label>Tiempo en minutos<input type="number" id="tiempo"></label>
+          <label>Porcentaje de aprobacion<input type="number" id="aprobacion"></label>
+        </div>
+        <label>Descripcion</label>
+        <textarea id="descripcion" rows="4"></textarea>
 
         <div class="panel-title-row questions-title">
           <h3>Preguntas</h3>
@@ -66,31 +73,11 @@
           <span>1 registro</span>
         </div>
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Codigo</th>
-                <th>Examen</th>
-                <th>Tiempo</th>
-                <th>Aprobacion</th>
-                <th>Preguntas</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>JS-101</td>
-                <td>Fundamentos de JavaScript</td>
-                <td>10 min</td>
-                <td>70%</td>
-                <td>3</td>
-                <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
-              </tr>
-            </tbody>
-          </table>
+          <div id="contenedor-examenes"></div>
         </div>
       </article>
     </div>
   </main>
+  <script src="examen.js"></script>
 </body>
 </html>
