@@ -61,7 +61,83 @@ const usuariosDePrueba = [
 
 let preguntasDelFormulario = [];
 
+function normalizarUsuario(usuario, indice = 0) {
+  return {
+    id: String(usuario.id || usuario.identificacion || `usuario-${indice + 1}`),
+    fullName: usuario.fullName || usuario.nombre || "Usuario sin nombre",
+    email: usuario.email || "",
+    phone: usuario.phone || usuario.telefono || "",
+    role: usuario.role || usuario.cargo || "Docente",
+    password: usuario.password || usuario.contrasena || "Usuario123"
+  };
+}
+
+function normalizarExamen(examen, indice = 0) {
+  const codigo = examen.code || examen.codigo || `EX-${indice + 1}`;
+  const preguntas = examen.questions || examen.preguntas || [];
+
+  return {
+    id: String(examen.id || codigo),
+    code: String(codigo),
+    title: examen.title || examen.titulo || "Examen sin titulo",
+    timeLimit: Number(examen.timeLimit || examen.tiempo || 10),
+    approvalPercentage: Number(examen.approvalPercentage || examen.aprobacion || 70),
+    description: examen.description || examen.descripcion || "Examen creado desde el modulo de gestion.",
+    questions: preguntas.map((pregunta, indicePregunta) => {
+      const respuestas = pregunta.answers || pregunta.respuestas || [];
+
+      return {
+        id: String(pregunta.id || `q${indicePregunta + 1}`),
+        text: pregunta.text || pregunta.texto || `Pregunta ${indicePregunta + 1}`,
+        answers: respuestas.map((respuesta, indiceRespuesta) => ({
+          id: String(respuesta.id || `q${indicePregunta + 1}-a${indiceRespuesta + 1}`),
+          text: respuesta.text || respuesta.texto || `Respuesta ${indiceRespuesta + 1}`,
+          correct: Boolean(respuesta.correct || respuesta.correcta || respuesta.esCorrecta)
+        }))
+      };
+    })
+  };
+}
+
+function unirPorId(listaBase, listaNueva) {
+  const mapa = new Map();
+
+  [...listaBase, ...listaNueva].forEach((item) => {
+    mapa.set(String(item.id), item);
+  });
+
+  return Array.from(mapa.values());
+}
+
+function migrarDatosAnteriores() {
+  const usuariosAntiguos = JSON.parse(localStorage.getItem("usuarios") || "[]").map(normalizarUsuario);
+  const examenesAntiguos = JSON.parse(localStorage.getItem("examenes") || "[]").map(normalizarExamen);
+  const usuariosActuales = JSON.parse(localStorage.getItem(llaves.usuarios) || "[]").map(normalizarUsuario);
+  const examenesActuales = JSON.parse(localStorage.getItem(llaves.examenes) || "[]").map(normalizarExamen);
+  const usuariosUnidos = unirPorId(usuariosActuales, usuariosAntiguos);
+  const examenesUnidos = unirPorId(examenesActuales, examenesAntiguos);
+
+  if (usuariosUnidos.length) {
+    localStorage.setItem(llaves.usuarios, JSON.stringify(usuariosUnidos));
+  }
+
+  if (examenesUnidos.length) {
+    localStorage.setItem(llaves.examenes, JSON.stringify(examenesUnidos));
+  }
+
+  if (!sessionStorage.getItem(llaves.sesion) && localStorage.getItem("isLoggedIn") === "true") {
+    const email = localStorage.getItem("userEmail");
+    const usuario = usuariosUnidos.find((item) => item.email === email);
+
+    if (usuario) {
+      guardarSesion(usuario);
+    }
+  }
+}
+
 function crearDatosIniciales() {
+  migrarDatosAnteriores();
+
   if (!localStorage.getItem(llaves.examenes)) {
     localStorage.setItem(llaves.examenes, JSON.stringify(examenesDePrueba));
   }
