@@ -370,7 +370,7 @@ Archivos principales:
 - Titulo: obligatorio.
 - Tiempo: numero mayor a 0.
 - Porcentaje de aprobacion: numero entre 0 y 100.
-- Descripcion: obligatoria.
+- Descripcion: opcional.
 - Preguntas: minimo una pregunta.
 - Respuestas: minimo dos respuestas por pregunta.
 - Correcta: solo una respuesta correcta por pregunta.
