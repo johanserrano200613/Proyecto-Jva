@@ -118,6 +118,12 @@ textarea {
   letter-spacing: 0;
 }
 
+.logout-button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .view {
   width: min(100% - 48px, 1060px);
   min-height: calc(100vh - 72px);
@@ -454,6 +460,14 @@ exam-result-view {
   font-size: 12px;
 }
 
+.form-message {
+  min-height: 18px;
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .field-help {
   display: block;
   margin-top: 6px;
@@ -563,6 +577,12 @@ td a {
   background: var(--surface-soft);
 }
 
+.question-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .answer-row {
   display: flex !important;
   grid-template-columns: none;
@@ -580,6 +600,15 @@ td a {
 .answer-row input[type="text"] {
   width: 100%;
   min-height: 34px;
+}
+
+.empty-state {
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  text-align: center;
 }
 
 @media (max-width: 900px) {

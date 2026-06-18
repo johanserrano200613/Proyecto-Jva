@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acme School | Login</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -31,7 +32,7 @@
       <p>Ingresa para administrar el banco de examenes de Acme School. Los estudiantes pueden resolver pruebas desde el modulo publico.</p>
     </div>
 
-    <form class="panel login-panel" action="usuarios.html">
+    <form class="panel login-panel" id="formularioLogin">
       <h2>Iniciar sesion</h2>
       <label for="email">Email</label>
       <input id="email" type="email" value="admin@acme.edu" autocomplete="email" required>
@@ -40,6 +41,7 @@
       <input id="password" type="password" value="Admin1234" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}" title="Minimo 8 caracteres, una mayuscula, una minuscula y un numero." autocomplete="current-password" required>
 
       <p class="hint">Usuario demo: admin@acme.edu / Admin1234</p>
+      <p class="form-message" id="mensajeLogin" aria-live="polite"></p>
       <button class="primary-button wide-button" type="submit">Entrar</button>
     </form>
   </main>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acme School | Usuarios</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -22,7 +23,7 @@
       <a href="examenes.html">Examenes</a>
     </nav>
 
-    <span class="session-label">Administrador Acme</span>
+    <button class="session-label logout-button" type="button" data-cerrar-sesion>Cerrar sesion</button>
   </header>
 
   <main class="view management-view">
@@ -33,8 +34,9 @@
     </div>
 
     <div class="split-layout">
-      <form class="panel">
+      <form class="panel" id="formularioUsuario">
         <h2>Crear usuario</h2>
+        <input id="usuarioEditando" type="hidden">
         <label for="userId">Numero de identificacion</label>
         <input id="userId" type="text" inputmode="numeric" pattern="[0-9]{6,12}" minlength="6" maxlength="12" title="Ingresa solo numeros, entre 6 y 12 digitos." required>
         <small class="field-help">Solo numeros, entre 6 y 12 digitos.</small>
@@ -62,7 +64,7 @@
         <small class="field-help">Minimo 8 caracteres, una mayuscula, una minuscula y un numero.</small>
         <div class="form-actions">
           <button class="primary-button" type="submit">Crear usuario</button>
-          <button class="plain-button" type="button">Limpiar</button>
+          <button class="plain-button" type="reset">Limpiar</button>
         </div>
       </form>
 
@@ -82,17 +84,10 @@
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>100000001</td>
-                <td>Administrador Acme</td>
-                <td>admin@acme.edu</td>
-                <td><span class="pill">Administrativo</span></td>
-                <td><a href="#">Editar</a> <a href="#">Eliminar</a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              <tbody id="tablaUsuarios">
+              </tbody>
+            </table>
+          </div>
       </article>
     </div>
   </main>
