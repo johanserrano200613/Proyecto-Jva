@@ -61,6 +61,13 @@ const usuariosDePrueba = [
 
 let preguntasDelFormulario = [];
 
+function obtenerNumero(valor, valorPorDefecto) {
+  if (valor === undefined || valor === null || valor === "") return valorPorDefecto;
+
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : valorPorDefecto;
+}
+
 function normalizarUsuario(usuario, indice = 0) {
   return {
     id: String(usuario.id || usuario.identificacion || `usuario-${indice + 1}`),
@@ -80,8 +87,8 @@ function normalizarExamen(examen, indice = 0) {
     id: String(examen.id || codigo),
     code: String(codigo),
     title: examen.title || examen.titulo || "Examen sin titulo",
-    timeLimit: Number(examen.timeLimit || examen.tiempo || 10),
-    approvalPercentage: Number(examen.approvalPercentage || examen.aprobacion || 70),
+    timeLimit: obtenerNumero(examen.timeLimit ?? examen.tiempo, 10),
+    approvalPercentage: obtenerNumero(examen.approvalPercentage ?? examen.aprobacion, 70),
     description: examen.description || examen.descripcion || "Examen creado desde el modulo de gestion.",
     createdBy: examen.createdBy || examen.creadorId || "",
     creatorName: examen.creatorName || examen.creadorNombre || "Sin creador asignado",
@@ -734,7 +741,7 @@ class VistaResolverExamen extends HTMLElement {
             <legend>${indicePregunta + 1}. ${limpiarTexto(pregunta.text)}</legend>
             ${pregunta.answers.map((respuesta) => `
               <label>
-                <input type="radio" name="pregunta_${limpiarTexto(pregunta.id)}" value="${limpiarTexto(respuesta.id)}" ${this.respuestas[pregunta.id] === respuesta.id ? "checked" : ""}>
+                <input type="radio" name="pregunta_${indicePregunta}" data-pregunta-id="${limpiarTexto(pregunta.id)}" value="${limpiarTexto(respuesta.id)}" ${this.respuestas[pregunta.id] === respuesta.id ? "checked" : ""}>
                 ${limpiarTexto(respuesta.text)}
               </label>
             `).join("")}
@@ -749,7 +756,7 @@ class VistaResolverExamen extends HTMLElement {
 
     this.querySelectorAll("input[type='radio']").forEach((opcion) => {
       opcion.addEventListener("change", () => {
-        const idPregunta = opcion.name.replace("pregunta_", "");
+        const idPregunta = opcion.dataset.preguntaId;
         this.respuestas[idPregunta] = opcion.value;
         this.actualizarContadorRespondidas();
       });
@@ -788,6 +795,10 @@ class VistaResolverExamen extends HTMLElement {
   terminarExamen(tiempoAgotado = false) {
     clearInterval(this.reloj);
 
+    this.querySelectorAll("input[type='radio']:checked").forEach((opcion) => {
+      this.respuestas[opcion.dataset.preguntaId] = opcion.value;
+    });
+
     const totalPreguntas = this.examen.questions.length;
     const detalle = this.examen.questions.map((pregunta) => {
       const respuestaElegida = this.respuestas[pregunta.id];
@@ -805,8 +816,8 @@ class VistaResolverExamen extends HTMLElement {
       };
     });
     const respuestasCorrectas = detalle.filter((pregunta) => pregunta.isCorrect).length;
-    const porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
-    const aprobado = porcentaje >= this.examen.approvalPercentage;
+    const porcentaje = totalPreguntas ? Math.round((respuestasCorrectas / totalPreguntas) * 100) : 0;
+    const aprobado = totalPreguntas > 0 && porcentaje >= this.examen.approvalPercentage;
 
     const resultado = {
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
