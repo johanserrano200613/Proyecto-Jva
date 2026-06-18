@@ -402,7 +402,7 @@ exam-result-view {
 }
 
 .result-card {
-  width: min(100%, 360px);
+  width: min(100%, 760px);
   text-align: center;
 }
 
@@ -433,6 +433,45 @@ exam-result-view {
 
 .result-meta {
   font-size: 12px;
+}
+
+.result-detail {
+  display: grid;
+  gap: 12px;
+  margin: 22px 0;
+  text-align: left;
+}
+
+.result-detail h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.result-question {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--brand-dark);
+  border-radius: 4px;
+  background: var(--surface-soft);
+}
+
+.result-question h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.result-question p {
+  margin: 4px 0;
+}
+
+.result-question.is-correct {
+  border-left-color: #1f6a55;
+}
+
+.result-question.is-wrong {
+  border-left-color: var(--danger);
 }
 
 .wide-button {

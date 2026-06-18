@@ -83,6 +83,8 @@ function normalizarExamen(examen, indice = 0) {
     timeLimit: Number(examen.timeLimit || examen.tiempo || 10),
     approvalPercentage: Number(examen.approvalPercentage || examen.aprobacion || 70),
     description: examen.description || examen.descripcion || "Examen creado desde el modulo de gestion.",
+    createdBy: examen.createdBy || examen.creadorId || "",
+    creatorName: examen.creatorName || examen.creadorNombre || "Sin creador asignado",
     questions: preguntas.map((pregunta, indicePregunta) => {
       const respuestas = pregunta.answers || pregunta.respuestas || [];
 
@@ -149,7 +151,7 @@ function crearDatosIniciales() {
 
 function obtenerExamenes() {
   crearDatosIniciales();
-  return JSON.parse(localStorage.getItem(llaves.examenes)) || [];
+  return (JSON.parse(localStorage.getItem(llaves.examenes)) || []).map(normalizarExamen);
 }
 
 function guardarExamenes(examenes) {
@@ -158,7 +160,7 @@ function guardarExamenes(examenes) {
 
 function obtenerUsuarios() {
   crearDatosIniciales();
-  return JSON.parse(localStorage.getItem(llaves.usuarios)) || [];
+  return (JSON.parse(localStorage.getItem(llaves.usuarios)) || []).map(normalizarUsuario);
 }
 
 function guardarUsuarios(usuarios) {
@@ -266,6 +268,9 @@ function iniciarUsuarios() {
 
   function pintarUsuarios() {
     const usuarios = obtenerUsuarios();
+    const contador = tabla.closest(".table-panel").querySelector(".panel-title-row span");
+
+    contador.textContent = `${usuarios.length} registro${usuarios.length === 1 ? "" : "s"}`;
 
     if (!usuarios.length) {
       tabla.innerHTML = `<tr><td colspan="5"><div class="empty-state">No hay usuarios registrados.</div></td></tr>`;
@@ -458,10 +463,16 @@ function iniciarExamenes() {
   }
 
   function pintarExamenes() {
-    const examenes = obtenerExamenes();
+    const sesion = obtenerSesion();
+    const examenes = obtenerExamenes().filter((examen) => {
+      return !examen.createdBy || sesion?.role === "Administrativo" || examen.createdBy === sesion?.id;
+    });
+    const contador = tabla.closest(".table-panel").querySelector(".panel-title-row span");
+
+    contador.textContent = `${examenes.length} registro${examenes.length === 1 ? "" : "s"}`;
 
     if (!examenes.length) {
-      tabla.innerHTML = `<tr><td colspan="6"><div class="empty-state">No hay examenes registrados.</div></td></tr>`;
+      tabla.innerHTML = `<tr><td colspan="7"><div class="empty-state">No hay examenes registrados.</div></td></tr>`;
       return;
     }
 
@@ -472,6 +483,7 @@ function iniciarExamenes() {
         <td>${examen.timeLimit} min</td>
         <td>${examen.approvalPercentage}%</td>
         <td>${examen.questions.length}</td>
+        <td>${limpiarTexto(examen.creatorName)}</td>
         <td>
           <button class="plain-button" type="button" data-editar-examen="${limpiarTexto(examen.id)}">Editar</button>
           <button class="plain-button" type="button" data-eliminar-examen="${limpiarTexto(examen.id)}">Eliminar</button>
@@ -531,6 +543,9 @@ function iniciarExamenes() {
 
     const idOriginal = campoEditando.value;
     const codigo = formulario.querySelector("#codigoExamen").value.trim();
+    const sesion = obtenerSesion();
+    const examenes = obtenerExamenes();
+    const examenAnterior = examenes.find((item) => item.id === idOriginal);
     const examen = {
       id: idOriginal || codigo,
       code: codigo,
@@ -538,6 +553,8 @@ function iniciarExamenes() {
       timeLimit: Number(formulario.querySelector("#tiempoExamen").value),
       approvalPercentage: Number(formulario.querySelector("#porcentajeExamen").value),
       description: formulario.querySelector("#descripcionExamen").value.trim(),
+      createdBy: examenAnterior?.createdBy || sesion?.id || "",
+      creatorName: examenAnterior?.creatorName || sesion?.fullName || "Sin creador asignado",
       questions: preguntasDelFormulario.map((pregunta, indicePregunta) => ({
         id: pregunta.id || `q${indicePregunta + 1}`,
         text: pregunta.text.trim(),
@@ -548,7 +565,6 @@ function iniciarExamenes() {
         }))
       }))
     };
-    const examenes = obtenerExamenes();
     const existeOtro = examenes.some((item) => item.code === examen.code && item.id !== idOriginal);
 
     if (existeOtro) {
@@ -670,7 +686,6 @@ class VistaRegistroEstudiante extends HTMLElement {
 class VistaResolverExamen extends HTMLElement {
   constructor() {
     super();
-    this.preguntaActual = 0;
     this.respuestas = {};
     this.segundosRestantes = 0;
     this.reloj = null;
@@ -686,7 +701,7 @@ class VistaResolverExamen extends HTMLElement {
     }
 
     this.segundosRestantes = this.examen.timeLimit * 60;
-    this.mostrarPregunta();
+    this.mostrarExamenCompleto();
     this.iniciarReloj();
   }
 
@@ -694,8 +709,7 @@ class VistaResolverExamen extends HTMLElement {
     clearInterval(this.reloj);
   }
 
-  mostrarPregunta() {
-    const pregunta = this.examen.questions[this.preguntaActual];
+  mostrarExamenCompleto() {
     const cantidadRespondidas = Object.keys(this.respuestas).length;
 
     this.innerHTML = `
@@ -709,25 +723,25 @@ class VistaResolverExamen extends HTMLElement {
       </div>
 
       <div class="runner-stats">
-        <span>Pregunta ${this.preguntaActual + 1} de ${this.examen.questions.length}</span>
+        <span>${this.examen.questions.length} preguntas</span>
         <span>${cantidadRespondidas} respondidas</span>
         <span>${this.examen.timeLimit} min limite</span>
       </div>
 
       <form class="questions-form">
-        <fieldset class="question-card">
-          <legend>${this.preguntaActual + 1}. ${limpiarTexto(pregunta.text)}</legend>
-          ${pregunta.answers.map((respuesta) => `
-            <label>
-              <input type="radio" name="pregunta_${limpiarTexto(pregunta.id)}" value="${limpiarTexto(respuesta.id)}" ${this.respuestas[pregunta.id] === respuesta.id ? "checked" : ""}>
-              ${limpiarTexto(respuesta.text)}
-            </label>
-          `).join("")}
-        </fieldset>
+        ${this.examen.questions.map((pregunta, indicePregunta) => `
+          <fieldset class="question-card">
+            <legend>${indicePregunta + 1}. ${limpiarTexto(pregunta.text)}</legend>
+            ${pregunta.answers.map((respuesta) => `
+              <label>
+                <input type="radio" name="pregunta_${limpiarTexto(pregunta.id)}" value="${limpiarTexto(respuesta.id)}" ${this.respuestas[pregunta.id] === respuesta.id ? "checked" : ""}>
+                ${limpiarTexto(respuesta.text)}
+              </label>
+            `).join("")}
+          </fieldset>
+        `).join("")}
 
         <div class="runner-actions">
-          <button class="plain-button" type="button" data-anterior ${this.preguntaActual === 0 ? "disabled" : ""}>Anterior</button>
-          <button class="secondary-button" type="button" data-siguiente ${this.preguntaActual === this.examen.questions.length - 1 ? "disabled" : ""}>Siguiente</button>
           <button class="primary-button finish-button" type="submit">Terminar examen</button>
         </div>
       </form>
@@ -735,19 +749,10 @@ class VistaResolverExamen extends HTMLElement {
 
     this.querySelectorAll("input[type='radio']").forEach((opcion) => {
       opcion.addEventListener("change", () => {
-        this.respuestas[pregunta.id] = opcion.value;
+        const idPregunta = opcion.name.replace("pregunta_", "");
+        this.respuestas[idPregunta] = opcion.value;
         this.actualizarContadorRespondidas();
       });
-    });
-
-    this.querySelector("[data-anterior]").addEventListener("click", () => {
-      this.preguntaActual--;
-      this.mostrarPregunta();
-    });
-
-    this.querySelector("[data-siguiente]").addEventListener("click", () => {
-      this.preguntaActual++;
-      this.mostrarPregunta();
     });
 
     this.querySelector("form").addEventListener("submit", (evento) => {
@@ -784,11 +789,22 @@ class VistaResolverExamen extends HTMLElement {
     clearInterval(this.reloj);
 
     const totalPreguntas = this.examen.questions.length;
-    const respuestasCorrectas = this.examen.questions.reduce((total, pregunta) => {
+    const detalle = this.examen.questions.map((pregunta) => {
       const respuestaElegida = this.respuestas[pregunta.id];
       const respuestaCorrecta = pregunta.answers.find((respuesta) => respuesta.correct);
-      return total + (respuestaElegida === respuestaCorrecta.id ? 1 : 0);
-    }, 0);
+      const opcionElegida = pregunta.answers.find((respuesta) => respuesta.id === respuestaElegida);
+
+      return {
+        questionId: pregunta.id,
+        questionText: pregunta.text,
+        selectedAnswerId: respuestaElegida || "",
+        selectedAnswerText: opcionElegida?.text || "Sin responder",
+        correctAnswerId: respuestaCorrecta?.id || "",
+        correctAnswerText: respuestaCorrecta?.text || "Sin respuesta correcta",
+        isCorrect: respuestaElegida === respuestaCorrecta?.id
+      };
+    });
+    const respuestasCorrectas = detalle.filter((pregunta) => pregunta.isCorrect).length;
     const porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
     const aprobado = porcentaje >= this.examen.approvalPercentage;
 
@@ -804,6 +820,7 @@ class VistaResolverExamen extends HTMLElement {
       approved: aprobado,
       timeExpired: tiempoAgotado,
       answers: this.respuestas,
+      detail: detalle,
       finishedAt: new Date().toISOString()
     };
 
@@ -831,6 +848,8 @@ class VistaResultadoExamen extends HTMLElement {
       return;
     }
 
+    const detalle = resultado.detail || [];
+
     this.innerHTML = `
       <article class="result-card">
         <span>Resultado</span>
@@ -838,6 +857,16 @@ class VistaResultadoExamen extends HTMLElement {
         <p>${resultado.correct} de ${resultado.total} respuestas acertadas.</p>
         <p class="result-meta">Estudiante: ${limpiarTexto(resultado.studentName)} - ID: ${limpiarTexto(resultado.studentId)}</p>
         <div class="status ${resultado.approved ? "pass" : "fail"}">${resultado.approved ? "Examen aprobado" : "Examen no aprobado"}</div>
+        <div class="result-detail">
+          <h2>Revision de respuestas</h2>
+          ${detalle.map((pregunta, indice) => `
+            <div class="result-question ${pregunta.isCorrect ? "is-correct" : "is-wrong"}">
+              <h3>${indice + 1}. ${limpiarTexto(pregunta.questionText)}</h3>
+              <p><strong>Tu respuesta:</strong> ${limpiarTexto(pregunta.selectedAnswerText)}</p>
+              <p><strong>Respuesta correcta:</strong> ${limpiarTexto(pregunta.correctAnswerText)}</p>
+            </div>
+          `).join("")}
+        </div>
         <a class="primary-button wide-button" href="index.html">Volver a examenes</a>
       </article>
     `;
