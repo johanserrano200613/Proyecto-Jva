@@ -125,14 +125,9 @@ Proyecto-Jva/
 ├── login.html          # Inicio de sesion
 ├── usuarios.html       # Gestion de usuarios
 ├── examenes.html       # Gestion de examenes y preguntas
+├── script.js           # Logica general del proyecto
 ├── style.css           # Estilos generales del proyecto
 └── README.md           # Documentacion del proyecto
-```
-
-En la rama `johan` tambien se encuentra el archivo:
-
-```text
-script.js              # Logica del modulo publico de resolucion de examenes
 ```
 
 ## Llaves Compartidas De Almacenamiento
@@ -145,7 +140,9 @@ const llaves = {
   examenElegido: "acme_selected_exam",
   estudianteActual: "acme_current_student",
   resultadoActual: "acme_current_result",
-  resultados: "acme_results"
+  resultados: "acme_results",
+  usuarios: "acme_users",
+  sesion: "acme_session"
 };
 ```
 
@@ -207,6 +204,35 @@ Cada examen debe tener esta estructura:
 | `approvalPercentage` | Porcentaje minimo para aprobar. |
 | `description` | Descripcion del examen. |
 | `questions` | Lista de preguntas del examen. |
+
+## Estructura De Usuario
+
+Los usuarios se guardan en:
+
+```js
+"acme_users"
+```
+
+Estructura de cada usuario:
+
+```js
+{
+  id: "100000001",
+  fullName: "Administrador Acme",
+  email: "admin@acme.edu",
+  phone: "3001234567",
+  role: "Administrativo",
+  password: "Admin1234"
+}
+```
+
+## Estructura De Sesion
+
+La sesion activa se guarda en sessionStorage con la llave:
+
+```js
+"acme_session"
+```
 
 ## Campos De Cada Pregunta
 

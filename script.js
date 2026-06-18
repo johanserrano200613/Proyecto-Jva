@@ -3,7 +3,9 @@ const llaves = {
   examenElegido: "acme_selected_exam",
   estudianteActual: "acme_current_student",
   resultadoActual: "acme_current_result",
-  resultados: "acme_results"
+  resultados: "acme_results",
+  usuarios: "acme_users",
+  sesion: "acme_session"
 };
 
 const examenesDePrueba = [
@@ -46,17 +48,72 @@ const examenesDePrueba = [
   }
 ];
 
-function crearExamenesDePrueba() {
-  const yaHayExamenes = localStorage.getItem(llaves.examenes);
+const usuariosDePrueba = [
+  {
+    id: "100000001",
+    fullName: "Administrador Acme",
+    email: "admin@acme.edu",
+    phone: "3001234567",
+    role: "Administrativo",
+    password: "Admin1234"
+  }
+];
 
-  if (!yaHayExamenes) {
+let preguntasDelFormulario = [];
+
+function crearDatosIniciales() {
+  if (!localStorage.getItem(llaves.examenes)) {
     localStorage.setItem(llaves.examenes, JSON.stringify(examenesDePrueba));
+  }
+
+  if (!localStorage.getItem(llaves.usuarios)) {
+    localStorage.setItem(llaves.usuarios, JSON.stringify(usuariosDePrueba));
   }
 }
 
 function obtenerExamenes() {
-  crearExamenesDePrueba();
+  crearDatosIniciales();
   return JSON.parse(localStorage.getItem(llaves.examenes)) || [];
+}
+
+function guardarExamenes(examenes) {
+  localStorage.setItem(llaves.examenes, JSON.stringify(examenes));
+}
+
+function obtenerUsuarios() {
+  crearDatosIniciales();
+  return JSON.parse(localStorage.getItem(llaves.usuarios)) || [];
+}
+
+function guardarUsuarios(usuarios) {
+  localStorage.setItem(llaves.usuarios, JSON.stringify(usuarios));
+}
+
+function obtenerSesion() {
+  return JSON.parse(sessionStorage.getItem(llaves.sesion) || "null");
+}
+
+function guardarSesion(usuario) {
+  sessionStorage.setItem(llaves.sesion, JSON.stringify({
+    id: usuario.id,
+    fullName: usuario.fullName,
+    email: usuario.email,
+    role: usuario.role
+  }));
+}
+
+function cerrarSesion() {
+  sessionStorage.removeItem(llaves.sesion);
+  window.location.href = "login.html";
+}
+
+function protegerVistaPrivada() {
+  const pagina = location.pathname.split("/").pop();
+  const esPrivada = pagina === "usuarios.html" || pagina === "examenes.html";
+
+  if (esPrivada && !obtenerSesion()) {
+    window.location.href = "login.html";
+  }
 }
 
 function obtenerExamenElegido() {
@@ -66,7 +123,7 @@ function obtenerExamenElegido() {
 }
 
 function limpiarTexto(texto) {
-  return String(texto)
+  return String(texto ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -78,6 +135,373 @@ function convertirTiempo(segundosTotales) {
   const minutos = Math.floor(segundosTotales / 60).toString().padStart(2, "0");
   const segundos = (segundosTotales % 60).toString().padStart(2, "0");
   return `${minutos}:${segundos}`;
+}
+
+function crearId(prefijo) {
+  return `${prefijo}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+}
+
+function iniciarEventosGlobales() {
+  document.querySelectorAll("[data-cerrar-sesion]").forEach((boton) => {
+    boton.addEventListener("click", cerrarSesion);
+  });
+}
+
+function iniciarLogin() {
+  const formulario = document.querySelector("#formularioLogin");
+  if (!formulario) return;
+
+  const mensaje = document.querySelector("#mensajeLogin");
+
+  formulario.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    if (!formulario.checkValidity()) {
+      formulario.reportValidity();
+      return;
+    }
+
+    const email = formulario.querySelector("#email").value.trim().toLowerCase();
+    const password = formulario.querySelector("#password").value;
+    const usuario = obtenerUsuarios().find((item) => item.email.toLowerCase() === email && item.password === password);
+
+    if (!usuario) {
+      mensaje.textContent = "Correo o contrasena incorrectos.";
+      return;
+    }
+
+    guardarSesion(usuario);
+    window.location.href = "usuarios.html";
+  });
+}
+
+function iniciarUsuarios() {
+  const formulario = document.querySelector("#formularioUsuario");
+  const tabla = document.querySelector("#tablaUsuarios");
+  if (!formulario || !tabla) return;
+
+  const campoEditando = formulario.querySelector("#usuarioEditando");
+
+  function limpiarFormulario() {
+    formulario.reset();
+    campoEditando.value = "";
+    formulario.querySelector("button[type='submit']").textContent = "Crear usuario";
+  }
+
+  function pintarUsuarios() {
+    const usuarios = obtenerUsuarios();
+
+    if (!usuarios.length) {
+      tabla.innerHTML = `<tr><td colspan="5"><div class="empty-state">No hay usuarios registrados.</div></td></tr>`;
+      return;
+    }
+
+    tabla.innerHTML = usuarios.map((usuario) => `
+      <tr>
+        <td>${limpiarTexto(usuario.id)}</td>
+        <td>${limpiarTexto(usuario.fullName)}</td>
+        <td>${limpiarTexto(usuario.email)}</td>
+        <td><span class="pill">${limpiarTexto(usuario.role)}</span></td>
+        <td>
+          <button class="plain-button" type="button" data-editar-usuario="${limpiarTexto(usuario.id)}">Editar</button>
+          <button class="plain-button" type="button" data-eliminar-usuario="${limpiarTexto(usuario.id)}">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+
+    tabla.querySelectorAll("[data-editar-usuario]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const usuario = obtenerUsuarios().find((item) => item.id === boton.dataset.editarUsuario);
+        if (!usuario) return;
+
+        campoEditando.value = usuario.id;
+        formulario.querySelector("#userId").value = usuario.id;
+        formulario.querySelector("#fullName").value = usuario.fullName;
+        formulario.querySelector("#userEmail").value = usuario.email;
+        formulario.querySelector("#phone").value = usuario.phone;
+        formulario.querySelector("#role").value = usuario.role;
+        formulario.querySelector("#userPassword").value = usuario.password;
+        formulario.querySelector("button[type='submit']").textContent = "Actualizar usuario";
+      });
+    });
+
+    tabla.querySelectorAll("[data-eliminar-usuario]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const usuariosFiltrados = obtenerUsuarios().filter((usuario) => usuario.id !== boton.dataset.eliminarUsuario);
+        guardarUsuarios(usuariosFiltrados);
+        pintarUsuarios();
+      });
+    });
+  }
+
+  formulario.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    if (!formulario.checkValidity()) {
+      formulario.reportValidity();
+      return;
+    }
+
+    const usuario = {
+      id: formulario.querySelector("#userId").value.trim(),
+      fullName: formulario.querySelector("#fullName").value.trim(),
+      email: formulario.querySelector("#userEmail").value.trim(),
+      phone: formulario.querySelector("#phone").value.trim(),
+      role: formulario.querySelector("#role").value,
+      password: formulario.querySelector("#userPassword").value
+    };
+    const usuarios = obtenerUsuarios();
+    const idOriginal = campoEditando.value;
+    const existeOtro = usuarios.some((item) => item.id === usuario.id && item.id !== idOriginal);
+
+    if (existeOtro) {
+      formulario.querySelector("#userId").setCustomValidity("Ya existe un usuario con esta identificacion.");
+      formulario.reportValidity();
+      formulario.querySelector("#userId").setCustomValidity("");
+      return;
+    }
+
+    const nuevosUsuarios = idOriginal
+      ? usuarios.map((item) => item.id === idOriginal ? usuario : item)
+      : [...usuarios, usuario];
+
+    guardarUsuarios(nuevosUsuarios);
+    limpiarFormulario();
+    pintarUsuarios();
+  });
+
+  formulario.addEventListener("reset", () => {
+    setTimeout(() => {
+      campoEditando.value = "";
+      formulario.querySelector("button[type='submit']").textContent = "Crear usuario";
+    }, 0);
+  });
+
+  pintarUsuarios();
+}
+
+function crearPreguntaVacia() {
+  return {
+    id: crearId("q"),
+    text: "",
+    answers: [
+      { id: crearId("a"), text: "", correct: true },
+      { id: crearId("a"), text: "", correct: false }
+    ]
+  };
+}
+
+function iniciarExamenes() {
+  const formulario = document.querySelector("#formularioExamen");
+  const contenedorPreguntas = document.querySelector("#contenedorPreguntas");
+  const tabla = document.querySelector("#tablaExamenes");
+  const botonAgregarPregunta = document.querySelector("#agregarPregunta");
+  if (!formulario || !contenedorPreguntas || !tabla || !botonAgregarPregunta) return;
+
+  const campoEditando = formulario.querySelector("#examenEditando");
+
+  function limpiarFormulario() {
+    formulario.reset();
+    campoEditando.value = "";
+    preguntasDelFormulario = [crearPreguntaVacia()];
+    formulario.querySelector("button[type='submit']").textContent = "Guardar examen";
+    pintarPreguntas();
+  }
+
+  function pintarPreguntas() {
+    contenedorPreguntas.innerHTML = preguntasDelFormulario.map((pregunta, indicePregunta) => `
+      <div class="question-editor" data-pregunta="${indicePregunta}">
+        <label for="pregunta_${indicePregunta}">Pregunta ${indicePregunta + 1}</label>
+        <input id="pregunta_${indicePregunta}" type="text" minlength="8" maxlength="180" value="${limpiarTexto(pregunta.text)}" data-texto-pregunta="${indicePregunta}" required>
+
+        ${pregunta.answers.map((respuesta, indiceRespuesta) => `
+          <label class="answer-row">
+            <input type="radio" name="correcta_${indicePregunta}" data-respuesta-correcta="${indicePregunta}:${indiceRespuesta}" ${respuesta.correct ? "checked" : ""} required>
+            <input type="text" placeholder="Descripcion de la respuesta" minlength="2" maxlength="120" value="${limpiarTexto(respuesta.text)}" data-texto-respuesta="${indicePregunta}:${indiceRespuesta}" required>
+            <button class="plain-button" type="button" data-quitar-respuesta="${indicePregunta}:${indiceRespuesta}">Quitar</button>
+          </label>
+        `).join("")}
+
+        <div class="question-actions">
+          <button class="secondary-button" type="button" data-agregar-respuesta="${indicePregunta}">Agregar respuesta</button>
+          <button class="plain-button" type="button" data-quitar-pregunta="${indicePregunta}">Quitar pregunta</button>
+        </div>
+      </div>
+    `).join("");
+
+    contenedorPreguntas.querySelectorAll("[data-texto-pregunta]").forEach((campo) => {
+      campo.addEventListener("input", () => {
+        preguntasDelFormulario[Number(campo.dataset.textoPregunta)].text = campo.value;
+      });
+    });
+
+    contenedorPreguntas.querySelectorAll("[data-texto-respuesta]").forEach((campo) => {
+      campo.addEventListener("input", () => {
+        const [indicePregunta, indiceRespuesta] = campo.dataset.textoRespuesta.split(":").map(Number);
+        preguntasDelFormulario[indicePregunta].answers[indiceRespuesta].text = campo.value;
+      });
+    });
+
+    contenedorPreguntas.querySelectorAll("[data-respuesta-correcta]").forEach((campo) => {
+      campo.addEventListener("change", () => {
+        const [indicePregunta, indiceRespuesta] = campo.dataset.respuestaCorrecta.split(":").map(Number);
+        preguntasDelFormulario[indicePregunta].answers = preguntasDelFormulario[indicePregunta].answers.map((respuesta, index) => ({
+          ...respuesta,
+          correct: index === indiceRespuesta
+        }));
+        pintarPreguntas();
+      });
+    });
+
+    contenedorPreguntas.querySelectorAll("[data-agregar-respuesta]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const indicePregunta = Number(boton.dataset.agregarRespuesta);
+        preguntasDelFormulario[indicePregunta].answers.push({ id: crearId("a"), text: "", correct: false });
+        pintarPreguntas();
+      });
+    });
+
+    contenedorPreguntas.querySelectorAll("[data-quitar-respuesta]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const [indicePregunta, indiceRespuesta] = boton.dataset.quitarRespuesta.split(":").map(Number);
+        const respuestas = preguntasDelFormulario[indicePregunta].answers;
+        if (respuestas.length <= 2) return;
+        respuestas.splice(indiceRespuesta, 1);
+        if (!respuestas.some((respuesta) => respuesta.correct)) respuestas[0].correct = true;
+        pintarPreguntas();
+      });
+    });
+
+    contenedorPreguntas.querySelectorAll("[data-quitar-pregunta]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        if (preguntasDelFormulario.length <= 1) return;
+        preguntasDelFormulario.splice(Number(boton.dataset.quitarPregunta), 1);
+        pintarPreguntas();
+      });
+    });
+  }
+
+  function pintarExamenes() {
+    const examenes = obtenerExamenes();
+
+    if (!examenes.length) {
+      tabla.innerHTML = `<tr><td colspan="6"><div class="empty-state">No hay examenes registrados.</div></td></tr>`;
+      return;
+    }
+
+    tabla.innerHTML = examenes.map((examen) => `
+      <tr>
+        <td>${limpiarTexto(examen.code)}</td>
+        <td>${limpiarTexto(examen.title)}</td>
+        <td>${examen.timeLimit} min</td>
+        <td>${examen.approvalPercentage}%</td>
+        <td>${examen.questions.length}</td>
+        <td>
+          <button class="plain-button" type="button" data-editar-examen="${limpiarTexto(examen.id)}">Editar</button>
+          <button class="plain-button" type="button" data-eliminar-examen="${limpiarTexto(examen.id)}">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+
+    tabla.querySelectorAll("[data-editar-examen]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const examen = obtenerExamenes().find((item) => item.id === boton.dataset.editarExamen);
+        if (!examen) return;
+
+        campoEditando.value = examen.id;
+        formulario.querySelector("#codigoExamen").value = examen.code;
+        formulario.querySelector("#tituloExamen").value = examen.title;
+        formulario.querySelector("#tiempoExamen").value = examen.timeLimit;
+        formulario.querySelector("#porcentajeExamen").value = examen.approvalPercentage;
+        formulario.querySelector("#descripcionExamen").value = examen.description;
+        preguntasDelFormulario = JSON.parse(JSON.stringify(examen.questions));
+        formulario.querySelector("button[type='submit']").textContent = "Actualizar examen";
+        pintarPreguntas();
+      });
+    });
+
+    tabla.querySelectorAll("[data-eliminar-examen]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const examenesFiltrados = obtenerExamenes().filter((examen) => examen.id !== boton.dataset.eliminarExamen);
+        guardarExamenes(examenesFiltrados);
+        pintarExamenes();
+      });
+    });
+  }
+
+  botonAgregarPregunta.addEventListener("click", () => {
+    preguntasDelFormulario.push(crearPreguntaVacia());
+    pintarPreguntas();
+  });
+
+  formulario.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    if (!formulario.checkValidity()) {
+      formulario.reportValidity();
+      return;
+    }
+
+    const preguntasValidas = preguntasDelFormulario.every((pregunta) => {
+      const respuestasLlenas = pregunta.answers.filter((respuesta) => respuesta.text.trim()).length >= 2;
+      const correctas = pregunta.answers.filter((respuesta) => respuesta.correct).length;
+      return pregunta.text.trim().length >= 8 && respuestasLlenas && correctas === 1;
+    });
+
+    if (!preguntasValidas) {
+      alert("Cada pregunta debe tener texto, minimo dos respuestas y solo una correcta.");
+      return;
+    }
+
+    const idOriginal = campoEditando.value;
+    const codigo = formulario.querySelector("#codigoExamen").value.trim();
+    const examen = {
+      id: idOriginal || codigo,
+      code: codigo,
+      title: formulario.querySelector("#tituloExamen").value.trim(),
+      timeLimit: Number(formulario.querySelector("#tiempoExamen").value),
+      approvalPercentage: Number(formulario.querySelector("#porcentajeExamen").value),
+      description: formulario.querySelector("#descripcionExamen").value.trim(),
+      questions: preguntasDelFormulario.map((pregunta, indicePregunta) => ({
+        id: pregunta.id || `q${indicePregunta + 1}`,
+        text: pregunta.text.trim(),
+        answers: pregunta.answers.map((respuesta, indiceRespuesta) => ({
+          id: respuesta.id || `${pregunta.id}-a${indiceRespuesta + 1}`,
+          text: respuesta.text.trim(),
+          correct: respuesta.correct
+        }))
+      }))
+    };
+    const examenes = obtenerExamenes();
+    const existeOtro = examenes.some((item) => item.code === examen.code && item.id !== idOriginal);
+
+    if (existeOtro) {
+      formulario.querySelector("#codigoExamen").setCustomValidity("Ya existe un examen con este codigo.");
+      formulario.reportValidity();
+      formulario.querySelector("#codigoExamen").setCustomValidity("");
+      return;
+    }
+
+    const nuevosExamenes = idOriginal
+      ? examenes.map((item) => item.id === idOriginal ? examen : item)
+      : [...examenes, examen];
+
+    guardarExamenes(nuevosExamenes);
+    limpiarFormulario();
+    pintarExamenes();
+  });
+
+  formulario.addEventListener("reset", () => {
+    setTimeout(() => {
+      campoEditando.value = "";
+      preguntasDelFormulario = [crearPreguntaVacia()];
+      formulario.querySelector("button[type='submit']").textContent = "Guardar examen";
+      pintarPreguntas();
+    }, 0);
+  });
+
+  limpiarFormulario();
+  pintarExamenes();
 }
 
 class VistaCatalogoExamenes extends HTMLElement {
@@ -343,6 +767,13 @@ class VistaResultadoExamen extends HTMLElement {
     `;
   }
 }
+
+crearDatosIniciales();
+protegerVistaPrivada();
+iniciarEventosGlobales();
+iniciarLogin();
+iniciarUsuarios();
+iniciarExamenes();
 
 customElements.define("exam-hub-view", VistaCatalogoExamenes);
 customElements.define("student-register-view", VistaRegistroEstudiante);
