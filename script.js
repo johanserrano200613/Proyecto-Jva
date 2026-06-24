@@ -151,8 +151,11 @@ function crearDatosIniciales() {
     localStorage.setItem(llaves.examenes, JSON.stringify(examenesDePrueba));
   }
 
-  if (!localStorage.getItem(llaves.usuarios)) {
-    localStorage.setItem(llaves.usuarios, JSON.stringify(usuariosDePrueba));
+  const usuariosGuardados = JSON.parse(localStorage.getItem(llaves.usuarios) || "[]").map(normalizarUsuario);
+  const tieneAdministrador = usuariosGuardados.some((usuario) => usuario.role === "Administrativo");
+
+  if (!tieneAdministrador) {
+    localStorage.setItem(llaves.usuarios, JSON.stringify(unirPorId(usuariosGuardados, usuariosDePrueba)));
   }
 }
 
@@ -315,7 +318,16 @@ function iniciarUsuarios() {
 
     tabla.querySelectorAll("[data-eliminar-usuario]").forEach((boton) => {
       boton.addEventListener("click", () => {
-        const usuariosFiltrados = obtenerUsuarios().filter((usuario) => usuario.id !== boton.dataset.eliminarUsuario);
+        const usuarios = obtenerUsuarios();
+        const usuarioAEliminar = usuarios.find((usuario) => usuario.id === boton.dataset.eliminarUsuario);
+        const cantidadAdministradores = usuarios.filter((usuario) => usuario.role === "Administrativo").length;
+
+        if (usuarioAEliminar?.role === "Administrativo" && cantidadAdministradores === 1) {
+          alert("No se puede eliminar el ultimo administrador porque se bloquearia el acceso privado.");
+          return;
+        }
+
+        const usuariosFiltrados = usuarios.filter((usuario) => usuario.id !== boton.dataset.eliminarUsuario);
         guardarUsuarios(usuariosFiltrados);
         pintarUsuarios();
       });
@@ -341,11 +353,18 @@ function iniciarUsuarios() {
     const usuarios = obtenerUsuarios();
     const idOriginal = campoEditando.value;
     const existeOtro = usuarios.some((item) => item.id === usuario.id && item.id !== idOriginal);
+    const usuarioOriginal = usuarios.find((item) => item.id === idOriginal);
+    const cantidadAdministradores = usuarios.filter((item) => item.role === "Administrativo").length;
 
     if (existeOtro) {
       formulario.querySelector("#userId").setCustomValidity("Ya existe un usuario con esta identificacion.");
       formulario.reportValidity();
       formulario.querySelector("#userId").setCustomValidity("");
+      return;
+    }
+
+    if (usuarioOriginal?.role === "Administrativo" && usuario.role !== "Administrativo" && cantidadAdministradores === 1) {
+      alert("Debe existir al menos un usuario administrativo para iniciar sesion.");
       return;
     }
 
