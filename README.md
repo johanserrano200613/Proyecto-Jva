@@ -114,6 +114,19 @@ Archivos relacionados:
 - `presentacion.html`
 - `resultado.html`
 
+### 5. Reporte De Examenes
+
+Modulo privado que muestra por cada examen:
+
+- Codigo y titulo.
+- Porcentaje de aprobacion configurado.
+- Numero de estudiantes unicos que lo presentaron.
+- Promedio de los porcentajes obtenidos.
+
+Archivo relacionado:
+
+- `reportes.html`
+
 ## Estructura De Archivos
 
 ```text

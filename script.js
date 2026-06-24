@@ -197,7 +197,7 @@ function cerrarSesion() {
 
 function protegerVistaPrivada() {
   const pagina = location.pathname.split("/").pop();
-  const esPrivada = pagina === "usuarios.html" || pagina === "examenes.html";
+  const esPrivada = pagina === "usuarios.html" || pagina === "examenes.html" || pagina === "reportes.html";
 
   if (esPrivada && !obtenerSesion()) {
     window.location.href = "login.html";
@@ -622,6 +622,39 @@ function iniciarExamenes() {
   pintarExamenes();
 }
 
+function iniciarReportes() {
+  const tabla = document.querySelector("#tablaReportes");
+  const contador = document.querySelector("#contadorReportes");
+  if (!tabla || !contador) return;
+
+  const examenes = obtenerExamenes();
+  const resultados = JSON.parse(localStorage.getItem(llaves.resultados) || "[]");
+
+  contador.textContent = `${examenes.length} examen${examenes.length === 1 ? "" : "es"}`;
+
+  if (!examenes.length) {
+    tabla.innerHTML = `<tr><td colspan="5"><div class="empty-state">No hay examenes registrados.</div></td></tr>`;
+    return;
+  }
+
+  tabla.innerHTML = examenes.map((examen) => {
+    const resultadosDelExamen = resultados.filter((resultado) => String(resultado.examId) === String(examen.id));
+    const estudiantes = new Set(resultadosDelExamen.map((resultado) => String(resultado.studentId || "")).filter(Boolean));
+    const sumaPorcentajes = resultadosDelExamen.reduce((total, resultado) => total + obtenerNumero(resultado.percentage, 0), 0);
+    const promedio = resultadosDelExamen.length ? sumaPorcentajes / resultadosDelExamen.length : 0;
+
+    return `
+      <tr>
+        <td><strong>${limpiarTexto(examen.code)}</strong></td>
+        <td>${limpiarTexto(examen.title)}</td>
+        <td><span class="pill">${examen.approvalPercentage}%</span></td>
+        <td>${estudiantes.size}</td>
+        <td><strong>${promedio.toFixed(1)}%</strong></td>
+      </tr>
+    `;
+  }).join("");
+}
+
 class VistaCatalogoExamenes extends HTMLElement {
   connectedCallback() {
     const examenes = obtenerExamenes();
@@ -909,6 +942,7 @@ iniciarEventosGlobales();
 iniciarLogin();
 iniciarUsuarios();
 iniciarExamenes();
+iniciarReportes();
 
 customElements.define("exam-hub-view", VistaCatalogoExamenes);
 customElements.define("student-register-view", VistaRegistroEstudiante);

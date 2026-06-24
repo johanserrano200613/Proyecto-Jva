@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme School | Reportes</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Acme School</strong>
+        <small>Exams platform</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegacion principal">
+      <a href="index.html">Resolver examen</a>
+      <a href="usuarios.html">Usuarios</a>
+      <a href="examenes.html">Examenes</a>
+      <a class="active" href="reportes.html">Reportes</a>
+    </nav>
+
+    <button class="session-label logout-button" type="button" data-cerrar-sesion>Cerrar sesion</button>
+  </header>
+
+  <main class="view management-view">
+    <div class="section-title">
+      <span>Resultados academicos</span>
+      <h1>Reporte de examenes</h1>
+      <p>Consulta la participacion y el promedio obtenido por los estudiantes en cada examen.</p>
+    </div>
+
+    <section class="panel table-panel" aria-labelledby="tituloReporte">
+      <div class="panel-title-row">
+        <h2 id="tituloReporte">Resumen por examen</h2>
+        <span id="contadorReportes">0 examenes</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Titulo del examen</th>
+              <th>Porcentaje de aprobacion</th>
+              <th>Estudiantes</th>
+              <th>Promedio obtenido</th>
+            </tr>
+          </thead>
+          <tbody id="tablaReportes"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

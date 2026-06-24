@@ -582,6 +582,15 @@ table {
   min-width: 620px;
 }
 
+.report-table {
+  min-width: 760px;
+}
+
+.report-table td:nth-child(n + 3),
+.report-table th:nth-child(n + 3) {
+  text-align: center;
+}
+
 th,
 td {
   padding: 15px 12px;
