@@ -1,151 +1,70 @@
-# Plataforma de Examenes - Acme School
+# 📝 Plataforma de Exámenes — Acme School
 
-Proyecto web para que la escuela Acme pueda administrar usuarios, crear examenes y permitir que los estudiantes presenten pruebas desde una vista publica.
+Aplicación web desarrollada con tecnologías nativas del navegador para gestionar y presentar exámenes. El proyecto trabaja con **HTML, CSS, JavaScript, Web Components, localStorage y sessionStorage**, sin frameworks ni backend.
 
-El proyecto se desarrolla con tecnologias basicas del navegador:
+> Proyecto colaborativo de formación. Mi trabajo se enfocó especialmente en el módulo público de resolución de exámenes, temporizador, captura de respuestas y cálculo de resultados.
 
-- HTML
-- CSS
-- JavaScript
-- localStorage / sessionStorage
-- Web Components nativos
+## 🎯 Objetivo
 
-No se usan frameworks ni backend.
+Construir una plataforma capaz de cubrir el ciclo básico de un examen:
 
-## Objetivo Del Proyecto
+- autenticación de usuarios autorizados;
+- gestión de usuarios;
+- creación y administración de exámenes;
+- presentación pública de pruebas;
+- temporizador y finalización automática;
+- cálculo de resultados;
+- almacenamiento local de la información;
+- reportes básicos.
 
-Construir una plataforma web donde:
+## 🛠️ Stack
 
-- Los administradores o docentes puedan iniciar sesion.
-- Los usuarios autorizados puedan gestionar usuarios.
-- Los usuarios autorizados puedan crear examenes, preguntas y respuestas.
-- Los estudiantes puedan presentar examenes sin iniciar sesion.
-- El sistema calcule automaticamente el resultado del examen.
-- Los datos se guarden en el navegador usando localStorage.
+- **HTML5**
+- **CSS3**
+- **JavaScript**
+- **Web Components nativos**
+- **localStorage**
+- **sessionStorage**
 
-## Modulos Principales
+## 🧩 Módulos principales
 
-### 1. Login
+| Módulo | Archivo | Función |
+|---|---|---|
+| Catálogo público | `index.html` | Lista exámenes disponibles |
+| Registro | `registro.html` | Captura datos del estudiante |
+| Presentación | `presentacion.html` | Ejecuta el examen y temporizador |
+| Resultado | `resultado.html` | Calcula y muestra resultado |
+| Login | `login.html` | Acceso a módulos privados |
+| Usuarios | `usuarios.html` | Gestión de usuarios |
+| Exámenes | `examenes.html` | Gestión de pruebas y preguntas |
+| Reportes | `reportes.html` | Métricas y resultados |
+| Lógica | `script.js` | Comportamiento de la aplicación |
+| Estilos | `style.css` | Diseño responsive compartido |
 
-Vista inicial para acceder a los modulos privados.
-
-Debe permitir:
-
-- Ingresar correo electronico.
-- Ingresar contrasena.
-- Validar credenciales.
-- Guardar sesion activa.
-- Proteger las vistas privadas.
-
-Archivo relacionado:
-
-- `login.html`
-
-### 2. Gestion De Usuarios
-
-Modulo privado para administrar los usuarios que pueden entrar a la plataforma.
-
-Datos del usuario:
-
-- Numero de identificacion.
-- Nombre completo.
-- Email.
-- Telefono.
-- Cargo: Administrativo o Docente.
-- Contrasena.
-
-Debe permitir:
-
-- Crear usuarios.
-- Editar usuarios.
-- Eliminar usuarios.
-- Listar usuarios registrados.
-
-Archivo relacionado:
-
-- `usuarios.html`
-
-### 3. Gestion De Examenes Y Preguntas
-
-Modulo privado para crear y administrar examenes.
-
-Datos del examen:
-
-- Codigo.
-- Titulo.
-- Tiempo limite en minutos.
-- Porcentaje de aprobacion.
-- Descripcion.
-- Preguntas.
-- Respuestas.
-
-Reglas importantes:
-
-- Cada examen puede tener varias preguntas.
-- Cada pregunta puede tener varias respuestas.
-- Cada pregunta solo puede tener una respuesta correcta.
-- Los examenes deben guardarse en localStorage.
-
-Archivo relacionado:
-
-- `examenes.html`
-
-### 4. Resolucion Publica De Examenes
-
-Modulo publico para que un estudiante pueda presentar un examen sin iniciar sesion.
-
-Flujo esperado:
-
-1. El estudiante ve la lista de examenes disponibles.
-2. Selecciona un examen.
-3. Ingresa numero de identificacion y nombre completo.
-4. Presenta el examen.
-5. El sistema muestra un temporizador en tiempo real.
-6. El estudiante selecciona una respuesta por pregunta.
-7. El estudiante termina el examen o el sistema lo finaliza cuando el tiempo llega a cero.
-8. El sistema calcula el porcentaje obtenido.
-9. El sistema muestra si aprobo o no aprobo.
-10. El resultado se guarda en localStorage.
-
-Archivos relacionados:
-
-- `index.html`
-- `registro.html`
-- `presentacion.html`
-- `resultado.html`
-
-### 5. Reporte De Examenes
-
-Modulo privado que muestra por cada examen:
-
-- Codigo y titulo.
-- Porcentaje de aprobacion configurado.
-- Numero de estudiantes unicos que lo presentaron.
-- Promedio de los porcentajes obtenidos.
-
-Archivo relacionado:
-
-- `reportes.html`
-
-## Estructura De Archivos
+## 🔄 Flujo público
 
 ```text
-Proyecto-Jva/
-├── index.html          # Catalogo publico de examenes
-├── registro.html       # Registro del estudiante antes del examen
-├── presentacion.html   # Pantalla para presentar el examen
-├── resultado.html      # Resultado final del examen
-├── login.html          # Inicio de sesion
-├── usuarios.html       # Gestion de usuarios
-├── examenes.html       # Gestion de examenes y preguntas
-├── script.js           # Logica general del proyecto
-├── style.css           # Estilos generales del proyecto
-└── README.md           # Documentacion del proyecto
+Catálogo de exámenes
+        │
+        ▼
+Registro del estudiante
+        │
+        ▼
+Presentación del examen
+   ├── temporizador
+   ├── respuestas
+   └── finalización automática
+        │
+        ▼
+Cálculo del resultado
+        │
+        ▼
+Persistencia en localStorage
 ```
 
-## Llaves Compartidas De Almacenamiento
+## 💾 Persistencia
 
-Para integrar los modulos, todos deben usar las mismas llaves en localStorage y sessionStorage.
+La aplicación comparte claves de almacenamiento entre módulos:
 
 ```js
 const llaves = {
@@ -159,294 +78,65 @@ const llaves = {
 };
 ```
 
-### Llave Principal De Examenes
+Esto permite mantener el flujo entre páginas sin un backend externo.
 
-El modulo de Gestion de Examenes debe guardar los examenes en:
+## ✅ Funcionalidades implementadas
 
-```js
-localStorage.setItem("acme_exams", JSON.stringify(examenes));
+- Catálogo público de exámenes.
+- Registro de estudiante.
+- Ejecución del examen con preguntas y respuestas.
+- Temporizador en tiempo real.
+- Finalización manual o automática por tiempo.
+- Cálculo de porcentaje obtenido.
+- Resultado aprobado/no aprobado.
+- Persistencia de resultados en `localStorage`.
+- Interfaz responsive.
+- Componentes web nativos para organizar vistas y lógica.
+
+## 👥 Trabajo colaborativo
+
+El proyecto fue desarrollado por módulos. Mi responsabilidad principal fue el **flujo público de resolución de exámenes**, incluyendo:
+
+- catálogo de exámenes;
+- captura de datos del estudiante;
+- presentación de preguntas;
+- control del temporizador;
+- almacenamiento de respuestas;
+- cálculo y persistencia del resultado.
+
+Esto permite presentar el proyecto de forma transparente: es un trabajo colaborativo y no se atribuye individualmente la totalidad de los módulos.
+
+## ▶️ Cómo probarlo
+
+1. Clona el repositorio.
+2. Abre la carpeta en Visual Studio Code.
+3. Usa Live Server o un servidor HTTP local.
+4. Abre `index.html`.
+5. Navega por el flujo público o ingresa al módulo privado desde `login.html`.
+
+Ejemplo con Python:
+
+```bash
+python -m http.server 5500
 ```
 
-El modulo de Resolucion Publica los debe leer desde:
+Luego abre `http://localhost:5500`.
 
-```js
-JSON.parse(localStorage.getItem("acme_exams"));
-```
+## ⚠️ Alcance técnico
 
-## Estructura De Datos Del Examen
+Este proyecto utiliza almacenamiento del navegador como persistencia y **no implementa autenticación de producción ni backend real**. Su objetivo es demostrar manejo de JavaScript, DOM, componentes nativos, estado y flujo entre módulos.
 
-Cada examen debe tener esta estructura:
+## 🎯 Qué demuestra este proyecto
 
-```js
-{
-  id: "JS-101",
-  code: "JS-101",
-  title: "Fundamentos de JavaScript",
-  timeLimit: 10,
-  approvalPercentage: 70,
-  description: "Evalua conceptos basicos de variables, funciones, arreglos y DOM.",
-  questions: [
-    {
-      id: "q1",
-      text: "Que palabra se usa para declarar una constante?",
-      answers: [
-        {
-          id: "q1-a1",
-          text: "const",
-          correct: true
-        },
-        {
-          id: "q1-a2",
-          text: "var",
-          correct: false
-        }
-      ]
-    }
-  ]
-}
-```
+- Programación con JavaScript sin frameworks.
+- Manipulación del DOM y eventos.
+- Diseño de flujos de interfaz.
+- Persistencia local.
+- Web Components.
+- Validaciones y lógica de negocio en frontend.
+- Trabajo modular y colaboración mediante Git.
 
-## Campos Del Examen
+---
 
-| Campo | Descripcion |
-| --- | --- |
-| `id` | Identificador unico del examen. |
-| `code` | Codigo visible del examen. |
-| `title` | Titulo del examen. |
-| `timeLimit` | Tiempo limite en minutos. |
-| `approvalPercentage` | Porcentaje minimo para aprobar. |
-| `description` | Descripcion del examen. |
-| `questions` | Lista de preguntas del examen. |
-
-## Estructura De Usuario
-
-Los usuarios se guardan en:
-
-```js
-"acme_users"
-```
-
-Estructura de cada usuario:
-
-```js
-{
-  id: "100000001",
-  fullName: "Administrador Acme",
-  email: "admin@acme.edu",
-  phone: "3001234567",
-  role: "Administrativo",
-  password: "Admin1234"
-}
-```
-
-## Estructura De Sesion
-
-La sesion activa se guarda en sessionStorage con la llave:
-
-```js
-"acme_session"
-```
-
-## Campos De Cada Pregunta
-
-```js
-{
-  id: "q1",
-  text: "Texto de la pregunta",
-  answers: []
-}
-```
-
-| Campo | Descripcion |
-| --- | --- |
-| `id` | Identificador unico de la pregunta. |
-| `text` | Enunciado de la pregunta. |
-| `answers` | Lista de respuestas posibles. |
-
-## Campos De Cada Respuesta
-
-```js
-{
-  id: "q1-a1",
-  text: "Texto de la respuesta",
-  correct: true
-}
-```
-
-| Campo | Descripcion |
-| --- | --- |
-| `id` | Identificador unico de la respuesta. |
-| `text` | Texto de la respuesta. |
-| `correct` | Indica si es la respuesta correcta. |
-
-Importante: cada pregunta debe tener solo una respuesta con `correct: true`.
-
-## Estructura Del Resultado
-
-Los resultados deben guardarse en:
-
-```js
-"acme_results"
-```
-
-Estructura del resultado:
-
-```js
-{
-  id: "resultado-unico",
-  examId: "JS-101",
-  examTitle: "Fundamentos de JavaScript",
-  studentId: "100000001",
-  studentName: "Nombre Completo",
-  correct: 2,
-  total: 3,
-  percentage: 67,
-  approved: false,
-  timeExpired: false,
-  answers: {
-    q1: "q1-a1",
-    q2: "q2-a2"
-  },
-  finishedAt: "2026-06-12T00:00:00.000Z"
-}
-```
-
-## Division Del Equipo
-
-### Integrante 1: Login Y Usuarios
-
-Responsabilidades:
-
-- Crear la logica del login.
-- Validar usuarios.
-- Guardar sesion.
-- Cerrar sesion.
-- Proteger vistas privadas.
-- Crear, editar y eliminar usuarios.
-
-Archivos principales:
-
-- `login.html`
-- `usuarios.html`
-
-### Integrante 2: Gestion De Examenes Y Preguntas
-
-Responsabilidades:
-
-- Crear el componente principal de gestion de examenes.
-- Mostrar tabla de examenes creados.
-- Crear formulario de examen.
-- Agregar preguntas dinamicamente.
-- Agregar respuestas dinamicamente.
-- Validar una unica respuesta correcta por pregunta.
-- Guardar los examenes en `acme_exams`.
-
-Archivo principal:
-
-- `examenes.html`
-
-### Integrante 3: Resolucion Publica De Examenes
-
-Responsabilidades:
-
-- Mostrar catalogo publico.
-- Pedir datos del estudiante.
-- Mostrar examen activo.
-- Controlar temporizador.
-- Guardar respuestas.
-- Calcular resultado.
-- Mostrar aprobado o no aprobado.
-- Guardar resultados en `acme_results`.
-
-Archivos principales:
-
-- `index.html`
-- `registro.html`
-- `presentacion.html`
-- `resultado.html`
-- `script.js`
-
-## Validaciones Recomendadas
-
-### Usuarios
-
-- Identificacion: solo numeros, entre 6 y 12 digitos.
-- Nombre completo: solo letras y espacios.
-- Email: formato de correo.
-- Telefono: solo numeros, entre 7 y 15 digitos.
-- Contrasena: minimo 8 caracteres, una mayuscula, una minuscula y un numero.
-- Cargo: Administrativo o Docente.
-
-### Examenes
-
-- Codigo: obligatorio y unico.
-- Titulo: obligatorio.
-- Tiempo: numero mayor a 0.
-- Porcentaje de aprobacion: numero entre 0 y 100.
-- Descripcion: opcional.
-- Preguntas: minimo una pregunta.
-- Respuestas: minimo dos respuestas por pregunta.
-- Correcta: solo una respuesta correcta por pregunta.
-
-### Presentacion Del Examen
-
-- El estudiante debe ingresar identificacion y nombre completo.
-- Solo puede seleccionar una respuesta por pregunta.
-- El examen termina si el estudiante presiona Terminar.
-- El examen termina automaticamente si el tiempo llega a cero.
-
-## Ramas Del Repositorio
-
-### main
-
-Rama principal del proyecto. Contiene las vistas base separadas y la documentacion general.
-
-### johan
-
-Rama de trabajo del Integrante 3. Contiene la logica del modulo publico de resolucion de examenes.
-
-## Como Probar El Proyecto
-
-1. Clonar el repositorio.
-2. Abrir la carpeta en Visual Studio Code.
-3. Abrir `index.html` en el navegador.
-4. Navegar por las vistas:
-   - `index.html`
-   - `registro.html`
-   - `presentacion.html`
-   - `resultado.html`
-   - `login.html`
-   - `usuarios.html`
-   - `examenes.html`
-
-Recomendado: usar Live Server en Visual Studio Code.
-
-## Requisitos Del Proyecto
-
-- Diseno responsive.
-- Interfaz clara e intuitiva.
-- Persistencia de datos con localStorage.
-- Uso de JavaScript modular o componentes.
-- Uso de Web Components.
-- Flujo completo desde creacion hasta finalizacion del examen.
-- README con documentacion general del proyecto.
-
-## Estado Actual
-
-El proyecto cuenta con:
-
-- Vistas HTML separadas.
-- Estilos generales compartidos.
-- Documentacion general.
-- Rama `johan` con logica del modulo publico de resolucion de examenes.
-
-Pendientes globales:
-
-- Integrar la logica completa del login.
-- Integrar la logica completa de gestion de usuarios.
-- Integrar la logica completa de gestion de examenes y preguntas.
-- Unificar y probar el flujo completo con todos los modulos.
-
-## Autor
-
-Proyecto desarrollado como entrega individual/equipo para la plataforma de examenes de Acme School.
+**Autor / colaborador:** Johan Serrano  
+[GitHub](https://github.com/johanserrano200613) · [Email](mailto:johanserrano200613@gmail.com)
